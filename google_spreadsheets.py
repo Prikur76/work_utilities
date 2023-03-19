@@ -4,22 +4,18 @@
 
 from __future__ import print_function
 
-import os.path
 import os
-import sys
 
-from GOOGLE.auth.transport.requests import Request
-from GOOGLE.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
+from google.oauth2 import service_account
+from dotenv import load_dotenv
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from GOOGLE.oauth2 import service_account
-from dotenv import load_dotenv
-import logging
+
 
 load_dotenv()
 
-service_account = {
+
+service_account_file = {
     'type': 'service_account',
     'project_id': os.environ.get('PROJECT_ID'),
     'private_key_id': os.environ.get('PRIVATE_KEY_ID'),
@@ -28,15 +24,15 @@ service_account = {
     'client_id': os.environ.get('CLIENT_ID'),
     'auth_uri': 'https://accounts.google.com/o/oauth2/auth',
     'token_uri': 'https://oauth2.googleapis.com/token',
-    'auth_provider_x509_cert_url': 'https://www.googleapis.com/oauth2/v1/certs',
+    'auth_provider_x509_cert_url':
+        'https://www.googleapis.com/oauth2/v1/certs',
     'client_x509_cert_url': os.environ.get('CLIENT_X509_CERT_URL')
 }
 
+
 class Sheet:
-
     def __init__(self, service_account):
-        self.service_account_file = service_account
-
+        self.service_account_file = service_account_file
 
     def get_build(self):
         """
@@ -46,9 +42,9 @@ class Sheet:
         SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
         creds = None
         creds = service_account.Credentials\
-            .from_service_account_file(self.service_account_file, scopes=SCOPES)
+            .from_service_account_file(self.service_account_file,
+                                       scopes=SCOPES)
         return build('sheets', 'v4', credentials=creds, static_discovery=False)
-
 
     def create_sheet(self, title, sheets=['']):
         """
@@ -73,7 +69,6 @@ class Sheet:
             return spreadsheet.get('spreadsheetId')
         raise HttpError
 
-
     def get_values(self, spreadsheet_id, range_name):
         """
         Возвращает данные одного диапазона
@@ -89,7 +84,6 @@ class Sheet:
         if result:
             return result
         raise HttpError
-
 
     def batch_get_values(self, spreadsheet_id, range_names):
         """
@@ -111,8 +105,8 @@ class Sheet:
             return result
         raise HttpError
 
-
-    def update_values(self, spreadsheet_id, range_name, value_input_option, values):
+    def update_values(self, spreadsheet_id, range_name,
+                      value_input_option, values):
         """
         Обновление ячеек в одном диапазоне таблицы.
         :param spreadsheet_id:
@@ -136,7 +130,6 @@ class Sheet:
             return result
         raise HttpError
 
-
     def batch_update_values(self, spreadsheet_id, range, data):
         """
         Обновление нескольких диапазонов таблицы
@@ -145,7 +138,8 @@ class Sheet:
         :param data:
         :return:
         Формат data:
-        [{'range': range_name, 'values': values}, {'range': range_name2, 'values': values2}, ...]
+        [{'range': range_name, 'values': values},
+        {'range': range_name2, 'values': values2}, ...]
         Форма values:
         [[# Cell values ...], # Additional rows ...]
         """
@@ -160,12 +154,13 @@ class Sheet:
             ]
         }
         sheet = service.spreadsheets()
-        request = sheet.values().batchUpdate(spreadsheetId=spreadsheet_id, body=batch_update_values_request_body)
+        request = sheet.values()\
+            .batchUpdate(spreadsheetId=spreadsheet_id,
+                         body=batch_update_values_request_body)
         response = request.execute()
         if response:
             return response
         raise HttpError
-
 
     def batch_clear_values(self, spreadsheet_id, ranges):
         """
@@ -184,14 +179,16 @@ class Sheet:
             ]
         }
         sheet = service.spreadsheets()
-        request = sheet.values().batchClear(spreadsheetId=spreadsheet_id, body=batch_clear_values_request_body)
+        request = sheet.values()\
+            .batchClear(spreadsheetId=spreadsheet_id,
+                        body=batch_clear_values_request_body)
         response = request.execute()
         if response:
             return response
         raise HttpError
 
-
-    def append_values(self, spreadsheet_id, range_name, value_input_option, values):
+    def append_values(self, spreadsheet_id, range_name,
+                      value_input_option, values):
         """
         Добавляет данные к ближайшим свободным ячейкам в ОДНОМ диапазоне
         :param spreadsheet_id:
@@ -200,7 +197,8 @@ class Sheet:
         :param values:
         :return:
         Пример:
-        append_values("1CM29gwKIzeXsAppeNwrc8lbYaVMmUclprLuLYuHog4k", "A1:C2", "USER_ENTERED", [['F', 'B'],['C', 'D']])
+        append_values("1CM29gwKIzeXsAppeNwrc8lbYaVMmUclprLuLYuHog4k",
+        "A1:C2", "USER_ENTERED", [['F', 'B'],['C', 'D']])
         """
         service = self.get_build()
         body = {
@@ -217,16 +215,17 @@ class Sheet:
             return result
         raise HttpError
 
-
     def sheets_batch_update(self, spreadsheet_id, title, find, replacement):
         """
         https://developers.google.com/sheets/api/guides/batchupdate
         Обновляет заголовок электронной таблицы с помощью переменной title.
-        Находит и заменяет значения ячеек в электронной таблице, используя переменные поиска и замены.
+        Находит и заменяет значения ячеек в электронной таблице, используя
+        переменные поиска и замены.
         Формируем пакет задач:
         1. Изменение наименования таблицы.
         2. Найти и заменить текст
-        + ... Добавление дополнительных запросов или операций через requests.append()...
+        + ... Добавление дополнительных запросов или операций
+        через requests.append()...
         :param spreadsheet_id:
         :param title:
         :param find:
@@ -260,7 +259,6 @@ class Sheet:
         if find_replace_response:
             return find_replace_response
         raise HttpError
-
 
     def pivot_tables_base(self, spreadsheet_id):
         """
@@ -339,11 +337,12 @@ class Sheet:
             'requests': requests
         }
         sheet = service.spreadsheets()
-        response = sheet.batchUpdate(spreadsheetId=spreadsheet_id, body=body).execute()
+        response = sheet\
+            .batchUpdate(spreadsheetId=spreadsheet_id, body=body)\
+            .execute()
         if response:
             return response
         raise HttpError
-
 
     def pivot_tables_universal(self, spreadsheet_id, requests):
         """
