@@ -54,7 +54,6 @@ class Taximeter:
         response.raise_for_status()
         roster = response.json()
         drivers_profiles = roster['driver_profiles']
-        print(f'Start: ', drivers_profiles[-1])
         total = roster['total']
         if total > 1000:
             offsets = [i for i in range(1, total, 1000)]
@@ -65,7 +64,6 @@ class Taximeter:
                                          headers=headers)
                 response.raise_for_status()
                 driver_profiles = response.json()['driver_profiles']
-                print(f'Last_{offset}: ', driver_profiles[-1])
                 drivers_profiles.extend(driver_profiles)
         return drivers_profiles
 
@@ -161,7 +159,6 @@ class Taximeter:
         response.raise_for_status()
         vehicle_profile = response.json()
         return vehicle_profile
-
 
     def fetch_contractor_profile(self, contractor_profile_id):
         """TEST! Возвращает профиль водителя/курьера. Метод GET"""
