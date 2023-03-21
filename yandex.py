@@ -3,7 +3,6 @@ import requests
 
 
 class Taximeter:
-
     def __init__(self, park_id=None, api_key=None):
         self.park_id = park_id
         self.client_id = f'taxi/park/{park_id}'
@@ -16,7 +15,8 @@ class Taximeter:
 
     def fetch_drivers_profiles(self):
         """Возвращает профили водителей. Метод POST"""
-        url = 'https://fleet-api.taxi.yandex.net/v1/parks/driver-profiles/list'
+        url = 'https://fleet-api.taxi.yandex.net/v1/' \
+              'parks/driver-profiles/list'
         headers = {
             'X-Client-ID': self.client_id,
             'X-API-Key': self.api_key,
@@ -69,7 +69,8 @@ class Taximeter:
 
     def fetch_cars(self):
         """Возвращает 'сырой' список машин. Метод POST"""
-        url = 'https://fleet-api.taxi.yandex.net/v1/parks/cars/list'
+        url = 'https://fleet-api.taxi.yandex.net/' \
+              'v1/parks/cars/list'
         headers = {
             'X-Client-ID': self.client_id,
             'X-API-Key': self.api_key,
@@ -104,7 +105,8 @@ class Taximeter:
 
     def fetch_workrules(self):
         """Получение списка условий работы. Метод GET"""
-        url = 'https://fleet-api.taxi.yandex.net/v1/parks/driver-work-rules'
+        url = 'https://fleet-api.taxi.yandex.net/' \
+              'v1/parks/driver-work-rules'
         headers = {
             'X-Client-ID': self.client_id,
             'X-API-Key': self.api_key,
@@ -120,7 +122,8 @@ class Taximeter:
 
     def fetch_transaction_categories(self):
         """Возвращает список категорий транзакций. Метод POST"""
-        url = 'https://fleet-api.taxi.yandex.net/v2/parks/transactions/categories/list'
+        url = 'https://fleet-api.taxi.yandex.net/' \
+              'v2/parks/transactions/categories/list'
         headers = {
             'X-Client-ID': self.client_id,
             'X-API-Key': self.api_key,
@@ -146,7 +149,8 @@ class Taximeter:
 
     def fetch_vehicle_profile(self, vehicle_id: str):
         """TEST! Возвращает информацию об автомобиле. Метод GET"""
-        url = 'https://fleet-api.taxi.yandex.net/v2/parks/vehicles/car'
+        url = 'https://fleet-api.taxi.yandex.net/' \
+              'v2/parks/vehicles/car'
         headers = {
             'X-Client-ID': self.client_id,
             'X-API-Key': self.api_key,
@@ -162,7 +166,8 @@ class Taximeter:
 
     def fetch_contractor_profile(self, contractor_profile_id):
         """TEST! Возвращает профиль водителя/курьера. Метод GET"""
-        url = 'https://fleet-api.taxi.yandex.net/v2/parks/contractors/driver-profile'
+        url = 'https://fleet-api.taxi.yandex.net/' \
+              'v2/parks/contractors/driver-profile'
         headers = {
             'X-Client-ID': self.client_id,
             'X-API-Key': self.api_key,
