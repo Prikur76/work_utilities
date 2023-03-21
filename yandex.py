@@ -146,46 +146,35 @@ class Taximeter:
         transaction_categories = response.json()['categories']
         return transaction_categories
 
+    def fetch_vehicle_profile(self, vehicle_id: str):
+        """TEST! Возвращает информацию об автомобиле. Метод GET"""
+        url = 'https://fleet-api.taxi.yandex.net/v2/parks/vehicles/car'
+        headers = {
+            'X-Client-ID': self.client_id,
+            'X-API-Key': self.api_key,
+            'Accept-Language': 'ru'
+        }
+        params = {
+            'vehicle_id': vehicle_id
+        }
+        response = requests.get(url=url, params=params, headers=headers)
+        response.raise_for_status()
+        vehicle_profile = response.json()
+        return vehicle_profile
 
-    def get_profile_car(self, vehicle_id: str):
-        """
-        !!! Не работает !!!
-        Получение профиля автомобиля. Метод GET
-        :param vehicle_id:
-        :return:
-        """
-        url = 'https://fleet-api.taxi.yandex.net/v2/parks/vehicles/car?vehicle_id=%s' % (vehicle_id)
-        print(url)
-        payload = '{"park": {"id": "%s"}}' % (self.park_id)
-        response = requests.get(url=url,
-                                params=payload,
-                                headers=({"X-Park-ID":   self.park_id,
-                                          "X-Client-ID": self.client_id,
-                                          "X-API-Key":   self.api_key}))
 
-        if response.status_code == 200:
-            res = json.loads(response.text)
-            return res
-        else:
-            return response.status_code
-
-    def get_plofile_driver(self, driver_id):
-        """
-        !!! Не работает !!!
-        Получение профиля водителя. Метод GET
-        :param driver_id:
-        :return:
-        """
-        url = 'https://fleet-api.taxi.yandex.net/v2/parks/contractors/driver-profile?contractor_profile_id=%s' % (driver_id)
-        print(url)
-        payload = '{"park": {"id": "%s"}}' % (self.park_id)
-        response = requests.get(url=url,
-                                params=payload,
-                                headers=({"X-Park-ID":   self.park_id,
-                                          "X-Client-ID": self.client_id,
-                                          "X-API-Key":   self.api_key}))
-        if response.status_code == 200:
-            res = json.loads(response.text)
-            return res
-        else:
-            return response.status_code
+    def fetch_contractor_profile(self, contractor_profile_id):
+        """TEST! Возвращает профиль водителя/курьера. Метод GET"""
+        url = 'https://fleet-api.taxi.yandex.net/v2/parks/contractors/driver-profile'
+        headers = {
+            'X-Client-ID': self.client_id,
+            'X-API-Key': self.api_key,
+            'Accept-Language': 'ru'
+        }
+        params = {
+            'contractor_profile_id': contractor_profile_id
+        }
+        response = requests.get(url=url, params=params, headers=headers)
+        response.raise_for_status()
+        contractor_profile = response.json()
+        return contractor_profile
