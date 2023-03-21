@@ -35,6 +35,8 @@ def main():
     # print(len(krv_drivers))
     # krv_wrs = krv.fetch_workrules()
     # print(krv_wrs)
+    krv_transactions_categories = krv.fetch_transaction_categories()
+    print(krv_transactions_categories)
 
 
 if __name__ == '__main__':
