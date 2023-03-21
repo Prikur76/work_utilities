@@ -27,6 +27,19 @@ def create_contract(begin_date, end_date):
 
 def format_date_string(date_string, format='%d.%m.%Y'):
     """Форматирует строку с датой в формат даты"""
-    old_format = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%S')
+    old_format = datetime.strptime(
+        date_string, '%Y-%m-%dT%H:%M:%S')
     new_format = old_format.strftime(format)
     return new_format
+
+
+def check_phone(phone):
+    """Возвращает True or False как результат проверки соответствия
+    маске мобильного телефона
+    """
+    result = re.match(
+        r'^(\+7|7|8)?[\s\-]?\(?[9][0-9]{2}\)?'
+        r'[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$',
+        phone.strip()
+    )
+    return bool(result)
