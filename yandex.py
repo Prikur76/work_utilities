@@ -3,7 +3,7 @@ import requests
 
 
 class Taximeter:
-    """Класс Таксометр"""
+
     def __init__(self, park_id=None, api_key=None):
         self.park_id = park_id
         self.client_id = f'taxi/park/{park_id}'
@@ -131,10 +131,10 @@ class Taximeter:
         payload = {
             'query': {
                 'category': {
-                    'is_affecting_driver_balance': true,
-                    'is_creatable': false,
-                    'is_editable': false,
-                    'is_enabled': true
+                    'is_affecting_driver_balance': True,
+                    'is_creatable': False,
+                    'is_editable': False,
+                    'is_enabled': True,
                 },
                 'park': {
                     'id': self.park_id
