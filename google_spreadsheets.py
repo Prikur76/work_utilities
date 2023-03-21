@@ -11,7 +11,6 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 
-
 def _get_service_creds():
     """
         Проходим аутентификацию и возвращаем объект BUILD
@@ -23,7 +22,9 @@ def _get_service_creds():
     creds_file = os.path.join(current_directory, "creds.json")
     creds = service_account.Credentials. \
         from_service_account_file(creds_file, scopes=scopes)
-    build_connection = build('sheets', 'v4', credentials=creds, static_discovery=False)
+    build_connection = build('sheets', 'v4',
+                             credentials=creds,
+                             static_discovery=False)
     if not build_connection:
         raise HttpError
     return build_connection
@@ -32,7 +33,8 @@ def _get_service_creds():
 def create_sheet(title, sheets=['']):
     """
     https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets
-    Создание таблицы и листа/листов. Для создания по умолчанию параметр sheets = ['']
+    Создание таблицы и листа/листов.
+    Для создания по умолчанию параметр sheets = ['']
     Формат sheets:
         'sheets': [
             {'properties':
@@ -52,7 +54,6 @@ def create_sheet(title, sheets=['']):
             },
             # Additional sheets ....]
     пример:    NEW_SPREADSHEET_ID = create_sheet("NEW_TEST_SHEET", sheets)
-    результат: https://docs.google.com/spreadsheets/d/1COc164WGYeUjCAzwOrq18W4G6oV6xOSrIqpd5E09J2Q/edit#gid=259791439
     """
     service = _get_service_creds()
     sheet = service.spreadsheets()
@@ -144,7 +145,8 @@ def batch_update_values(spreadsheet_id, range, data):
           ]
       }
     Формат data:
-        [{'range': range_name, 'values': values}, {'range': range_name2, 'values': values2}, ...]
+        [{'range': range_name, 'values': values},
+        {'range': range_name2, 'values': values2}, ...]
     Форма values:
         [[# Cell values ...], # Additional rows ...]
     Пример:
