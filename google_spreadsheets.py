@@ -11,7 +11,8 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 
-def get_service_creds():
+
+def _get_service_creds():
     """
         Проходим аутентификацию и возвращаем объект BUILD
         https://developers.google.com/sheets/api/quickstart/python
@@ -53,7 +54,7 @@ def create_sheet(title, sheets=['']):
     пример:    NEW_SPREADSHEET_ID = create_sheet("NEW_TEST_SHEET", sheets)
     результат: https://docs.google.com/spreadsheets/d/1COc164WGYeUjCAzwOrq18W4G6oV6xOSrIqpd5E09J2Q/edit#gid=259791439
     """
-    service = get_service_creds()
+    service = _get_service_creds()
     sheet = service.spreadsheets()
     body = {
         'properties': {
@@ -72,7 +73,7 @@ def get_values(spreadsheet_id, range_name):
     """
     Запрос на данные из одного диапазона
     """
-    service = get_service_creds()
+    service = _get_service_creds()
     sheet = service.spreadsheets()
     result = sheet.values()\
         .get(spreadsheetId=spreadsheet_id, range=range_name)\
@@ -88,7 +89,7 @@ def batch_get_values(spreadsheet_id, range_names=[]):
     Пакетный запрос на данные из МАССИВА ДИАПАЗОНОВ
     range_names = ["Sheet1!A1:B", "Sheet2!A1:B", ...]
     """
-    service = get_service_creds()
+    service = _get_service_creds()
     sheet = service.spreadsheets()
     value_render_option = "FORMATTED_VALUE"
     result = sheet.values()\
@@ -115,7 +116,7 @@ def update_values(spreadsheet_id, range_name, value_input_option, values):
                   ])
     Чтобы очистить данные, используйте пустую строку ("")
     """
-    service = get_service_creds()
+    service = _get_service_creds()
     body = {
         'values': values
     }
@@ -154,7 +155,7 @@ def batch_update_values(spreadsheet_id, range, data):
                                 ['C', 'D']
                             ])
     """
-    service = get_service_creds()
+    service = _get_service_creds()
     batch_update_values_request_body = {
         "valueInputOption": "USER_ENTERED",
         "data": [
@@ -187,7 +188,7 @@ def batch_clear_values(spreadsheet_id, ranges):
         batch_update_values("1CM29gwKIzeXsAppeNwrc8lbYaVMmUclprLuLYuHog4k",
                             ranges= ["Sheet1!A1:S", "Sheet2!A1:S"...])
     """
-    service = get_service_creds()
+    service = _get_service_creds()
     batch_clear_values_request_body = {
         "ranges": [
             ranges
@@ -218,7 +219,7 @@ def append_values(spreadsheet_id, range_name, value_input_option, values):
                           ['C', 'D']
                       ])
     """
-    service = get_service_creds()
+    service = _get_service_creds()
     body = {
         'values': values
     }
@@ -246,7 +247,7 @@ def sheets_batch_update(spreadsheet_id, title, find, replacement):
     + ... Добавление дополнительных запросов или операций
     через requests.append()...
     """
-    service = get_service_creds()
+    service = _get_service_creds()
     requests = [{
         'updateSpreadsheetProperties': {
             'properties': {
