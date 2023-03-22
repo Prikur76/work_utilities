@@ -58,22 +58,23 @@
 'MetaId': 'eb830c4a-e4f5-4e80-b0b0-5f74053567b7'
 ```
 
+## Получение списка машин
 
 ```
-https://taksi.0nalog.com:1703/Transavto/hs/Car/v1/Get - GET запрос, получить список всех ТС в базе
-http://taksi.0nalog.com:1702/Transavto/hs/Car/v1/Get
-http://taksi.0nalog.com:1702/Transavto/hs/Car/v1/Get?inn=7712345678 - получение списка тс по ИНН организации
+https://taksi.0nalog.com:1703/<YOUR COMPANY>/hs/Car/v1/Get - GET запрос, получить список всех ТС в базе
+http://taksi.0nalog.com:1702/<YOUR COMPANY>/hs/Car/v1/Get
+http://taksi.0nalog.com:1702/<YOUR COMPANY>/hs/Car/v1/Get?inn=7712345678 - получение списка тс по ИНН организации
 Пример ответа:
 [
 {
 Number: "ТУ28377",
 STSSeries: "7729",
 STSNumber: "523038",
+Model: 'Hyundai Solaris', 
 Activity: true - Признак активности ТС (true - активно, штрафы по нему загружаются, false - штрафы не загружаются)
 IcorrectData: false - Гос. номер или СТС заполнены неверно
-SubscriptionStatus: False - используется подписка штрафов ГИБДД(возвращается если в программе есть такая возможность)
-LastInspectionDate
-LastInspectionMileage
+LastInspectionDate: None,
+LastInspectionMileage: None,
 INN: "" - ИНН
 KPP: "" - KPP
 Department: "" - подразделение
@@ -114,8 +115,6 @@ DisableContract: "" - исключить из договоров
 TOSeriesNumber: "" - тех. осмотр серия, номер
 TOIssueDate: "0001-01-01T00:00:00" - дата выдачи тех. осмотра
 TOValidityDate: "0001-01-01T00:00:00" - срок действия тех.осмотра
-SubscriptionStatus: False, - используется подписка штрафов ГИБДД(возвращается если в программе есть такая возможность)
-SubscriptionStatusDate: "0001-01-01T00:00:00" - дата изменения подписки штрафов ГИБДД(возвращается если в программе есть такая возможность)
 }
 ]
 ```
