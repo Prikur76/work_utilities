@@ -2,9 +2,61 @@ import logging
 import os
 
 from dotenv import load_dotenv
+
+import element as el
+import google as ggl
 import yandex as ya
 
 logger = logging.getLogger(__name__)
+
+load_dotenv()
+
+user = os.environ.get('ELEMENT_LOGIN')
+password = os.environ.get('ELEMENT_PASSWORD')
+drivers_url = os.environ.get('ELEMENT_DRIVERS_URL')
+
+taxoparks = {
+    'moscow': {
+        'park_id': os.environ.get('MSK_PARK_ID'),
+        'api_key': os.environ.get('MSK_X_API_KEY'),
+        'sheets_ids': [os.environ.get('MSK_SPREADSHEET_ID')]
+    },
+    'ekaterinburg': {
+        'park_id': os.environ.get('EKB_PARK_ID'),
+        'api_key': os.environ.get('EKB_X_API_KEY'),
+        'sheets_ids': [os.environ.get('EKB_SPREADSHEET_ID')]
+    },
+    'yaroslavl': {
+        'park_id': os.environ.get('YAR_PARK_ID'),
+        'api_key': os.environ.get('YAR_X_API_KEY'),
+        'sheets_ids': [
+            os.environ.get('YAR_SPREADSHEET_ID'),
+            os.environ.get('KSTR_SPREADSHEET_ID')
+        ]
+    },
+    'kirov': {
+        'park_id': os.environ.get('KRV_PARK_ID'),
+        'api_key': os.environ.get('KRV_X_API_KEY'),
+        'sheets_ids': [os.environ.get('KRV_SPREADSHEET_ID')]
+    }
+}
+range_for_update = os.environ.get('RANGES_FOR_UPDATE')
+def create_roster_for_report(park_id, api_key, active_drivers):
+    """Обновляем таблицу с отчетом в гугле"""
+    park = ya.Taximeter(park_id, api_key)
+    active_balances = park.fetch_active_balances()
+    roster = active_balances\
+        .merge(active_drivers, how='left',
+               left_on='ya_id', right_on='DefaultID') \
+        .drop(columns=['ya_id', 'DefaultID']) \
+        .dropna(subset=['FIO'])
+    roster = roster[['FIO', 'PhoneNumber', 'DatePL',
+                     'ya_balance', 'ConsolidBalance',
+                     'Car', 'NameConditionWork']] \
+        .sort_values(by=['Car', 'DatePL'],
+                     ascending=[True, False]) \
+        .drop_duplicates()
+    return roster
 
 
 def main():
@@ -12,31 +64,31 @@ def main():
         format='[%(levelname)s] - %(asctime)s - %(name)s - %(message)s',
         level=logging.INFO
     )
-    load_dotenv()
-    # ss_id =  os.environ.get('SPREADSHEET_ID')
-    # login_1c = os.environ.get('LOGIN_1C')
-    # password_1c = os.environ.get('PASSWORD_1C')
-    # drivers_1c_url = os.environ.get('DRIVERS_1C_URL')
-
-    ekb_park_id = os.environ.get('EKB_PARK_ID')
-    ekb_api_key = os.environ.get('EKB_X_API_KEY')
-
-    krv_park_id = os.environ.get('KRV_PARK_ID')
-    krv_api_key = os.environ.get('KRV_X_API_KEY')
-
-    ekb = ya.Taximeter(ekb_park_id, ekb_api_key)
-    # ekb_drivers = ekb.fetch_drivers_profiles()
-    # print(len(ekb_drivers))
-    # ekb_cars = ekb.fetch_cars()
-    # print(len(ekb_cars))
-
-    krv = ya.Taximeter(krv_park_id, krv_api_key)
-    # krv_drivers = krv.fetch_drivers_profiles()
-    # print(len(krv_drivers))
-    # krv_wrs = krv.fetch_workrules()
-    # print(krv_wrs)
-    krv_transactions_categories = krv.fetch_transaction_categories()
-    print(krv_transactions_categories)
+    try:
+        element = el.Element(user, password)
+        exclude_roster = [
+            '', 'Комфорт', 'Подключашки 2 %', 'ПОДКЛЮЧАШКА 3%', 'Штатный'
+        ]
+        active_drivers = element.fetch_active_drivers(
+            url=drivers_url, conditions_exclude=exclude_roster)
+        for park in taxoparks.values():
+            park_id, api_key, sheets_ids = park.values()
+            roster = create_roster_for_report(
+                park_id, api_key, active_drivers
+            )
+            for sheet_id in sheets_ids:
+                ggl.batch_clear_values(
+                    spreadsheet_id=sheet_id,
+                    ranges=range_for_update,
+                )
+                ggl.batch_update_values(
+                    spreadsheet_id=sheet_id,
+                    range=range_for_update,
+                    data=roster
+                )
+    except HttpError as err:
+        logger.error('Ошибка: ', err)
+    return
 
 
 if __name__ == '__main__':
