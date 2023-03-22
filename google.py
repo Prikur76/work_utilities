@@ -17,7 +17,6 @@ def _get_service_creds():
         https://developers.google.com/sheets/api/quickstart/python
     """
     scopes = ['https://www.googleapis.com/auth/spreadsheets']
-    creds = None
     current_directory = os.path.dirname(os.path.realpath(__file__))
     creds_file = os.path.join(current_directory, "creds.json")
     creds = service_account.Credentials. \
@@ -30,7 +29,7 @@ def _get_service_creds():
     return build_connection
 
 
-def create_sheet(title, sheets=['']):
+def create_sheet(title, sheets):
     """
     https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets
     Создание таблицы и листа/листов.
@@ -84,7 +83,7 @@ def get_values(spreadsheet_id, range_name):
     raise HttpError
 
 
-def batch_get_values(spreadsheet_id, range_names=[]):
+def batch_get_values(spreadsheet_id, range_names):
     """
     https://developers.google.com/sheets/api/quickstart/python#step_3_set_up_the_sample
     Пакетный запрос на данные из МАССИВА ДИАПАЗОНОВ
