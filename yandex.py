@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import requests
+import pandas as pd
 
 
 class Taximeter:
@@ -66,6 +67,22 @@ class Taximeter:
                 drivers_profiles.extend(driver_profiles)
         return drivers_profiles
 
+    def fetch_active_balances(self):
+        """Возвращает список активных водителей."""
+        drivers_profiles = self.fetch_drivers_profiles()
+        working_drivers = [
+            x for x in drivers_profiles
+            if x['driver_profile']['work_status'] == 'working'
+               and 'car' in x.keys()
+        ]
+        balances = [
+            {
+               'ya_id': driver['driver_profile']['id'],
+               'ya_balance': driver['accounts'][0]['balance'],
+            } for driver in working_drivers
+        ]
+        return pd.DataFrame(balances)
+
     def fetch_cars(self):
         """Возвращает 'сырой' список машин. Метод POST"""
         url = 'https://fleet-api.taxi.yandex.net/' \
@@ -102,7 +119,7 @@ class Taximeter:
         return cars
 
     def fetch_workrules(self):
-        """Получение списка условий работы. Метод GET"""
+        """Возвращает список условий работы. Метод GET"""
         url = 'https://fleet-api.taxi.yandex.net/' \
               'v1/parks/driver-work-rules'
         headers = {
@@ -146,7 +163,7 @@ class Taximeter:
         return transaction_categories
 
     def fetch_vehicle_profile(self, vehicle_id):
-        """TEST! Возвращает информацию об автомобиле. Метод GET"""
+        """!!!НЕ РАБОТАЕТ, NEED TEST!!! Возвращает информацию об автомобиле. Метод GET"""
         url = 'https://fleet-api.taxi.yandex.net/v2/parks/vehicles/car'
         headers = {
             'X-Park-ID': self.park_id,
@@ -162,7 +179,7 @@ class Taximeter:
         return vehicle_profile
 
     def fetch_contractor_profile(self, contractor_profile_id):
-        """TEST! Возвращает профиль водителя/курьера. Метод GET"""
+        """!!!НЕ РАБОТАЕТ, NEED TEST!!! Возвращает профиль водителя/курьера. Метод GET"""
         url = 'https://fleet-api.taxi.yandex.net/' \
               'v2/parks/contractors/driver-profile'
         headers = {
