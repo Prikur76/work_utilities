@@ -14,7 +14,6 @@ load_dotenv()
 user = os.environ.get('ELEMENT_LOGIN')
 password = os.environ.get('ELEMENT_PASSWORD')
 drivers_url = os.environ.get('ELEMENT_DRIVERS_URL')
-
 taxoparks = {
     'moscow': {
         'park_id': os.environ.get('MSK_PARK_ID'),
@@ -41,6 +40,7 @@ taxoparks = {
     }
 }
 range_for_update = os.environ.get('RANGES_FOR_UPDATE')
+
 def create_roster_for_report(park_id, api_key, active_drivers):
     """Обновляем таблицу с отчетом в гугле"""
     park = ya.Taximeter(park_id, api_key)
@@ -50,13 +50,14 @@ def create_roster_for_report(park_id, api_key, active_drivers):
                left_on='ya_id', right_on='DefaultID') \
         .drop(columns=['ya_id', 'DefaultID']) \
         .dropna(subset=['FIO'])
-    roster = roster[['FIO', 'PhoneNumber', 'DatePL',
-                     'ya_balance', 'ConsolidBalance',
-                     'Car', 'NameConditionWork']] \
+    sorted_balances = roster[
+        ['FIO', 'PhoneNumber', 'DatePL', 'ya_balance',
+         'ConsolidBalance', 'Car', 'NameConditionWork']
+    ]\
         .sort_values(by=['Car', 'DatePL'],
-                     ascending=[True, False]) \
+                     ascending=[True, False])\
         .drop_duplicates()
-    return roster
+    return sorted_balances
 
 
 def main():
