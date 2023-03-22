@@ -57,3 +57,65 @@
 'DatePL': '0001-01-01T00:00:00', 
 'MetaId': 'eb830c4a-e4f5-4e80-b0b0-5f74053567b7'
 ```
+
+
+```
+https://taksi.0nalog.com:1703/Transavto/hs/Car/v1/Get - GET запрос, получить список всех ТС в базе
+http://taksi.0nalog.com:1702/Transavto/hs/Car/v1/Get
+http://taksi.0nalog.com:1702/Transavto/hs/Car/v1/Get?inn=7712345678 - получение списка тс по ИНН организации
+Пример ответа:
+[
+{
+Number: "ТУ28377",
+STSSeries: "7729",
+STSNumber: "523038",
+Activity: true - Признак активности ТС (true - активно, штрафы по нему загружаются, false - штрафы не загружаются)
+IcorrectData: false - Гос. номер или СТС заполнены неверно
+SubscriptionStatus: False - используется подписка штрафов ГИБДД(возвращается если в программе есть такая возможность)
+LastInspectionDate
+LastInspectionMileage
+INN: "" - ИНН
+KPP: "" - KPP
+Department: "" - подразделение
+OnLine: true - ТС на линии
+Status: "Не работает" - статус ТС
+Code: "13233" - код ТС
+STSIssueDate: "0001-01-01T00:00:00" - дата выдачи СТС
+STSValidityDate: "0001-01-01T00:00:00" - СТС срок действия
+YearCar: "2020-01-01T00:00:00" - год выпуска ТС
+Organization: "ИНТЕЛ" - организация ТС
+LandLord: "Рога и копыта" - арендодатель
+UsageType: "Штат" - тип использования
+Driver: "Иванов Иван" - водитель
+BirthDate: "2000-01-01T00:00:00" - дата рождения
+SubStatus: "" - подстатус ТС
+Reason: "" - причина смены статуса
+Comment: "" - комментарий смены статуса
+MileAge: 30000 - пробег
+DaysFromInspection: 30 - прошло дней с осмотра
+KPPType: "" - тип КПП
+LastDateOfProtocol: "2020-02-02T00:00:00" - дата посл. протокола
+Gas: true - есть ГБО
+Brand: "" - брендирование
+VIN: "" - вин
+OSAGOSeries: "" - осаго, серия
+OSAGONumber: "" - осаго, номер
+OSAGOIssueDate: "0001-01-01T00:00:00" - осаго, дата выдачи
+OSAGOValidityDate: "0001-01-01T00:00:00" - осаго, срок действия
+OSAGOBonus: 500 - осаго, премия
+OSAGOInsurer: "Иванов И" - осаго, страховщик
+LicenseSeriesNumber: "" - лицензия такси, серия и номер
+LicenseIssueDate: "0001-01-01T00:00:00" - лицензия такси, дата выдачи
+LicenseValidityDate: "0001-01-01T00:00:00" - лицензия такси, срок действия
+LicenseLicensee: "" - лицензия такси, лицензиат
+Region: "" - регион
+DisableDocumentStatus: "" - исключить из документа статусы ТС
+DisableContract: "" - исключить из договоров
+TOSeriesNumber: "" - тех. осмотр серия, номер
+TOIssueDate: "0001-01-01T00:00:00" - дата выдачи тех. осмотра
+TOValidityDate: "0001-01-01T00:00:00" - срок действия тех.осмотра
+SubscriptionStatus: False, - используется подписка штрафов ГИБДД(возвращается если в программе есть такая возможность)
+SubscriptionStatusDate: "0001-01-01T00:00:00" - дата изменения подписки штрафов ГИБДД(возвращается если в программе есть такая возможность)
+}
+]
+```
