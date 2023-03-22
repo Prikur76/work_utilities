@@ -9,37 +9,6 @@ import yandex as ya
 
 logger = logging.getLogger(__name__)
 
-load_dotenv()
-
-user = os.environ.get('ELEMENT_LOGIN')
-password = os.environ.get('ELEMENT_PASSWORD')
-drivers_url = os.environ.get('ELEMENT_DRIVERS_URL')
-taxoparks = {
-    'moscow': {
-        'park_id': os.environ.get('MSK_PARK_ID'),
-        'api_key': os.environ.get('MSK_X_API_KEY'),
-        'sheets_ids': [os.environ.get('MSK_SPREADSHEET_ID')]
-    },
-    'ekaterinburg': {
-        'park_id': os.environ.get('EKB_PARK_ID'),
-        'api_key': os.environ.get('EKB_X_API_KEY'),
-        'sheets_ids': [os.environ.get('EKB_SPREADSHEET_ID')]
-    },
-    'yaroslavl': {
-        'park_id': os.environ.get('YAR_PARK_ID'),
-        'api_key': os.environ.get('YAR_X_API_KEY'),
-        'sheets_ids': [
-            os.environ.get('YAR_SPREADSHEET_ID'),
-            os.environ.get('KSTR_SPREADSHEET_ID')
-        ]
-    },
-    'kirov': {
-        'park_id': os.environ.get('KRV_PARK_ID'),
-        'api_key': os.environ.get('KRV_X_API_KEY'),
-        'sheets_ids': [os.environ.get('KRV_SPREADSHEET_ID')]
-    }
-}
-range_for_update = os.environ.get('RANGES_FOR_UPDATE')
 
 def create_roster_for_report(park_id, api_key, active_drivers):
     """Обновляем таблицу с отчетом в гугле"""
@@ -65,6 +34,38 @@ def main():
         format='[%(levelname)s] - %(asctime)s - %(name)s - %(message)s',
         level=logging.INFO
     )
+
+    load_dotenv()
+    user = os.environ.get('ELEMENT_LOGIN')
+    password = os.environ.get('ELEMENT_PASSWORD')
+    drivers_url = os.environ.get('ELEMENT_DRIVERS_URL')
+    taxoparks = {
+        'moscow': {
+            'park_id': os.environ.get('MSK_PARK_ID'),
+            'api_key': os.environ.get('MSK_X_API_KEY'),
+            'sheets_ids': [os.environ.get('MSK_SPREADSHEET_ID')]
+        },
+        'ekaterinburg': {
+            'park_id': os.environ.get('EKB_PARK_ID'),
+            'api_key': os.environ.get('EKB_X_API_KEY'),
+            'sheets_ids': [os.environ.get('EKB_SPREADSHEET_ID')]
+        },
+        'yaroslavl': {
+            'park_id': os.environ.get('YAR_PARK_ID'),
+            'api_key': os.environ.get('YAR_X_API_KEY'),
+            'sheets_ids': [
+                os.environ.get('YAR_SPREADSHEET_ID'),
+                os.environ.get('KSTR_SPREADSHEET_ID')
+            ]
+        },
+        'kirov': {
+            'park_id': os.environ.get('KRV_PARK_ID'),
+            'api_key': os.environ.get('KRV_X_API_KEY'),
+            'sheets_ids': [os.environ.get('KRV_SPREADSHEET_ID')]
+        }
+    }
+    range_for_update = os.environ.get('RANGES_FOR_UPDATE')
+
     try:
         element = el.Element(user, password)
         exclude_roster = [
