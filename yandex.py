@@ -7,7 +7,6 @@ class Taximeter:
         self.park_id = park_id
         self.client_id = f'taxi/park/{park_id}'
         self.api_key = api_key
-        print('Create instance of Yandex Taximeter')
 
     def __str__(self):
         return "Park_ID:    %s\nClient_ID:  %s\nAPI-key:    %s" \
@@ -74,7 +73,6 @@ class Taximeter:
         headers = {
             'X-Client-ID': self.client_id,
             'X-API-Key': self.api_key,
-            'Accept-Language': 'ru'
         }
         payload = {
             'limit': 1000,
@@ -147,14 +145,13 @@ class Taximeter:
         transaction_categories = response.json()['categories']
         return transaction_categories
 
-    def fetch_vehicle_profile(self, vehicle_id: str):
+    def fetch_vehicle_profile(self, vehicle_id):
         """TEST! Возвращает информацию об автомобиле. Метод GET"""
-        url = 'https://fleet-api.taxi.yandex.net/' \
-              'v2/parks/vehicles/car'
+        url = 'https://fleet-api.taxi.yandex.net/v2/parks/vehicles/car'
         headers = {
+            'X-Park-ID': self.park_id,
             'X-Client-ID': self.client_id,
-            'X-API-Key': self.api_key,
-            'Accept-Language': 'ru'
+            'X-API-Key': self.api_key
         }
         params = {
             'vehicle_id': vehicle_id
@@ -169,9 +166,9 @@ class Taximeter:
         url = 'https://fleet-api.taxi.yandex.net/' \
               'v2/parks/contractors/driver-profile'
         headers = {
+            'X-Park-ID': self.park_id,
             'X-Client-ID': self.client_id,
-            'X-API-Key': self.api_key,
-            'Accept-Language': 'ru'
+            'X-API-Key': self.api_key
         }
         params = {
             'contractor_profile_id': contractor_profile_id
