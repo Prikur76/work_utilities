@@ -98,4 +98,6 @@ def main():
 
 
 if __name__ == '__main__':
+    print('begin')
     main()
+    print('end')
