@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import requests
 import pandas as pd
+import requests
 
 
 class Taximeter:
@@ -73,15 +73,19 @@ class Taximeter:
         working_drivers = [
             x for x in drivers_profiles
             if x['driver_profile']['work_status'] == 'working'
-               and 'car' in x.keys()
+            and 'car' in x.keys()
         ]
-        balances = [
+        roster = [
             {
                'ya_id': driver['driver_profile']['id'],
                'ya_balance': driver['accounts'][0]['balance'],
             } for driver in working_drivers
         ]
-        return pd.DataFrame(balances)
+        balances = pd.DataFrame(roster)
+        balances['ya_balance'] = pd.to_numeric(
+            balances['ya_balance'], downcast='integer'
+        )
+        return balances
 
     def fetch_cars(self):
         """Возвращает 'сырой' список машин. Метод POST"""
@@ -163,7 +167,11 @@ class Taximeter:
         return transaction_categories
 
     def fetch_vehicle_profile(self, vehicle_id):
-        """!!!НЕ РАБОТАЕТ, NEED TEST!!! Возвращает информацию об автомобиле. Метод GET"""
+        """
+        !!!НЕ РАБОТАЕТ, NEED TEST!!!
+        Возвращает информацию об автомобиле.
+        Метод GET
+        """
         url = 'https://fleet-api.taxi.yandex.net/v2/parks/vehicles/car'
         headers = {
             'X-Park-ID': self.park_id,
@@ -179,7 +187,11 @@ class Taximeter:
         return vehicle_profile
 
     def fetch_contractor_profile(self, contractor_profile_id):
-        """!!!НЕ РАБОТАЕТ, NEED TEST!!! Возвращает профиль водителя/курьера. Метод GET"""
+        """
+        !!!НЕ РАБОТАЕТ, NEED TEST!!!
+        Возвращает профиль водителя/курьера.
+        Метод GET
+        """
         url = 'https://fleet-api.taxi.yandex.net/' \
               'v2/parks/contractors/driver-profile'
         headers = {
