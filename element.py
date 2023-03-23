@@ -1,3 +1,5 @@
+#!/home/vlad/environments/work_utilities/bin/python
+
 import os
 import pandas as pd
 import requests

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/home/vlad/environments/work_utilities/bin/python
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
