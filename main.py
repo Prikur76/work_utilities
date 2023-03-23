@@ -2,9 +2,10 @@ import logging
 import os
 
 from dotenv import load_dotenv
+from googleapiclient.errors import HttpError
 
 import element as el
-import google as ggl
+import spreadsheets as ss
 import yandex as ya
 
 logger = logging.getLogger(__name__)
@@ -64,7 +65,7 @@ def main():
             'sheets_ids': [os.environ.get('KRV_SPREADSHEET_ID')]
         }
     }
-    range_for_update = os.environ.get('RANGES_FOR_UPDATE')
+    range_for_update = os.environ.get('RANGE_FOR_UPDATE')
 
     try:
         element = el.Element(user, password)
@@ -72,24 +73,25 @@ def main():
             '', 'Комфорт', 'Подключашки 2 %', 'ПОДКЛЮЧАШКА 3%', 'Штатный'
         ]
         active_drivers = element.fetch_active_drivers(
-            url=drivers_url, conditions_exclude=exclude_roster)
+            url=drivers_url, conditions_exclude=exclude_roster
+        )
+
         for park in taxoparks.values():
             park_id, api_key, sheets_ids = park.values()
             roster = create_roster_for_report(
                 park_id, api_key, active_drivers
             )
+            drivers_records = roster.values.tolist()
+
             for sheet_id in sheets_ids:
-                ggl.batch_clear_values(
-                    spreadsheet_id=sheet_id,
-                    ranges=range_for_update,
+                ss.batch_clear_values(sheet_id, range_for_update)
+                ss.batch_update_values(
+                    sheet_id, range_for_update, drivers_records
                 )
-                ggl.batch_update_values(
-                    spreadsheet_id=sheet_id,
-                    range=range_for_update,
-                    data=roster
-                )
-    except HttpError as err:
-        logger.error('Ошибка: ', err)
+    except HttpError as http_err:
+        logger.error('Ошибка: ', http_err)
+    except AttributeError as attr_err:
+        logger.error('Ошибка: ', attr_err)
     return
 
 
