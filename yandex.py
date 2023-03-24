@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import pandas as pd
 import requests
 
@@ -11,7 +10,7 @@ class Taximeter:
 
     def __str__(self):
         return "Park_ID:    %s\nClient_ID:  %s\nAPI-key:    %s" \
-               % (self.park_id, self.client_id, self.api_key)
+            % (self.park_id, self.client_id, self.api_key)
 
     def fetch_drivers_profiles(self):
         """Возвращает профили водителей. Метод POST"""
@@ -72,13 +71,12 @@ class Taximeter:
         drivers_profiles = self.fetch_drivers_profiles()
         working_drivers = [
             x for x in drivers_profiles
-            if x['driver_profile']['work_status'] == 'working'
-            and 'car' in x.keys()
+            if (x['driver_profile']['work_status'] == 'working') | ('car' in x.keys())
         ]
         roster = [
             {
-               'ya_id': driver['driver_profile']['id'],
-               'ya_balance': driver['accounts'][0]['balance'],
+                'ya_id': driver['driver_profile']['id'],
+                'ya_balance': driver['accounts'][0]['balance'],
             } for driver in working_drivers
         ]
         balances = pd.DataFrame(roster)

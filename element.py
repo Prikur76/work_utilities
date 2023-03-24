@@ -1,11 +1,7 @@
-#!/home/vlad/environments/work_utilities/bin/python
-
-import os
 import pandas as pd
 import requests
 
 import tools
-from dotenv import load_dotenv
 
 pd.set_option('mode.chained_assignment', None)
 
@@ -22,18 +18,17 @@ class Element():
         response.raise_for_status()
         return response.json()
 
-    def fetch_active_drivers(self, url, conditions_exclude=['',]):
+    def fetch_active_drivers(self, url, conditions_exclude=['', ]):
         """Возвращает отфильтрованный список работающих водителей"""
         drivers_roster = self.get_drivers(url)
         drivers = pd.DataFrame(drivers_roster)
-        filters = (drivers.Status == 'Работает') & \
-                 (drivers.ExternalCar == False) & \
-                 (~drivers.NameConditionWork.isin(conditions_exclude)) & \
-                 (~drivers.PhoneNumber.isin([''])) & \
-                 (~drivers.DriversLicenseSerialNumber.isin([''])) & \
-                 (~drivers.Car.isin(['']))
+        filters = (drivers.Status == 'Работает') & (~drivers.ExternalCar) & \
+                  (~drivers.NameConditionWork.isin(conditions_exclude)) & \
+                  (~drivers.PhoneNumber.isin([''])) & \
+                  (~drivers.DriversLicenseSerialNumber.isin([''])) & \
+                  (~drivers.Car.isin(['']))
         filtered_roster = drivers[filters]
-        filtered_roster.loc[:, 'DatePL'] = filtered_roster['DatePL']\
+        filtered_roster.loc[:, 'DatePL'] = filtered_roster['DatePL'] \
             .apply(tools.format_date_string, format='%Y-%m-%d')
         filtered_roster.loc[:, 'PhoneNumber'] = filtered_roster['PhoneNumber'] \
             .apply(tools.remove_chars)
@@ -59,9 +54,8 @@ class Element():
         """Возвращает список активных машин. Метод GET"""
         cars_roster = self.get_cars(url, inn)
         cars = pd.DataFrame(cars_roster)
-        filters = (cars.Activity == True) & \
-                  (~cars.Status.isin(['АРХИВ', ]))
-        return cars[filters]\
+        filters = cars.Activity & (~cars.Status.isin(['АРХИВ', ]))
+        return cars[filters] \
             .sort_values(by='Code', ascending=True)
 
     def fetch_waybills(self, url, inn=None, phone=None,

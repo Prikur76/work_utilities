@@ -1,6 +1,3 @@
-#!/home/vlad/environments/work_utilities/bin/python
-# -*- coding: utf-8 -*-
-
 from __future__ import print_function
 
 from google.oauth2 import service_account

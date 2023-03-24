@@ -1,5 +1,3 @@
-#!/home/vlad/environments/work_utilities/bin/python
-
 import re
 import textwrap as tw
 from datetime import datetime
@@ -40,8 +38,7 @@ def check_phone(phone):
     маске мобильного телефона
     """
     result = re.match(
-        r'^(\+7|7|8)?[\s\-]?\(?[9][0-9]{2}\)?'
-        r'[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$',
+        r"^(\+7|7|8)?[\s\-]?\(?9[0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$",
         phone.strip()
     )
     return bool(result)
