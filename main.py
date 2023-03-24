@@ -1,5 +1,3 @@
-#!/home/vlad/environments/work_utilities/bin/python
-
 import logging
 import os
 
@@ -98,4 +96,5 @@ def main():
 
 
 if __name__ == '__main__':
-   main()
+    main()
+    print('Process finished')
