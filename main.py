@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import logging
 import os
 
@@ -7,6 +9,9 @@ from googleapiclient.errors import HttpError
 import element as el
 import spreadsheets as ss
 import yandex as ya
+
+import schedule
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -96,4 +101,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    schedule.every().hour.at('30:00').do(main)
+    schedule.every().hour.at('00:00').do(main)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
