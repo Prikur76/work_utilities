@@ -2,16 +2,15 @@
 
 import logging
 import os
+import time
 
+import schedule
 from dotenv import load_dotenv
 from googleapiclient.errors import HttpError
 
 import element as el
 import spreadsheets as ss
 import yandex as ya
-
-import schedule
-import time
 
 logger = logging.getLogger(__name__)
 
