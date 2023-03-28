@@ -49,7 +49,7 @@ def batch_get_values(spreadsheet_id, range_names):
     raise HttpError
 
 
-def batch_update_values(spreadsheet_id, range, data):
+def batch_update_values(spreadsheet_id, sheet_range, data):
     """
     Обновление нескольких диапазонов таблицы
     Формат body:
@@ -78,7 +78,7 @@ def batch_update_values(spreadsheet_id, range, data):
         "valueInputOption": "USER_ENTERED",
         "data": [
             {
-                "range": range,
+                "range": sheet_range,
                 "values": data
             }
         ]
