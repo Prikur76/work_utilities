@@ -16,7 +16,9 @@ class Element():
         auth = (self.user, self.password)
         response = requests.get(url=url, auth=auth)
         response.raise_for_status()
-        return response.json()
+        if response:
+            return response.json()
+        raise requests.exceptions.HTTPError('Request failed')
 
     def fetch_active_drivers(self, url, conditions_exclude=['', ]):
         """Возвращает отфильтрованный список работающих водителей"""
@@ -48,7 +50,9 @@ class Element():
         auth = (self.user, self.password)
         response = requests.get(url=url, params=params, auth=auth)
         response.raise_for_status()
-        return response.json()
+        if response:
+            return response.json()
+        raise requests.exceptions.HTTPError('Request failed')
 
     def fetch_active_cars(self, url, inn=None):
         """Возвращает список активных машин. Метод GET"""
@@ -78,4 +82,6 @@ class Element():
         response = requests.post(url=url, json=payload,
                                  auth=auth)
         response.raise_for_status()
-        return response.json()
+        if response:
+            return response.json()
+        raise requests.exceptions.HTTPError('Request failed')
