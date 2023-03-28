@@ -4,6 +4,7 @@ import logging
 import os
 import time
 
+import requests
 import schedule
 from dotenv import load_dotenv
 from googleapiclient.errors import HttpError
@@ -92,11 +93,15 @@ def main():
                 ss.batch_update_values(
                     sheet_id, range_for_update, drivers_records
                 )
-    except HttpError as http_err:
-        logger.error('Ошибка: ', http_err)
     except AttributeError as attr_err:
         logger.error('Ошибка: ', attr_err)
-    return
+    except HttpError as ggl_http_err:
+        logger.error('Ошибка подключения гугла: ', ggl_http_err)
+    except requests.exceptions.HTTPError as http_err:
+        logger.error('Ошибка запроса: ', http_err)
+    except requests.exceptions.ConnectionError as connection_err:
+        logger.error('Lost HTTP connection: ', connection_err)
+        time.sleep(10)
 
 
 if __name__ == '__main__':
