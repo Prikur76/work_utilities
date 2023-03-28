@@ -94,8 +94,6 @@ def main():
                     ss.batch_update_values(
                         sheet_id, range_for_update, drivers_records
                     )
-        except AttributeError as attr_err:
-            logger.error('Ошибка: ', attr_err)
         except HttpError as ggl_http_err:
             logger.error('Ошибка подключения гугла: ', ggl_http_err)
         except requests.exceptions.HTTPError as http_err:
