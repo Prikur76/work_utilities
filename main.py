@@ -45,6 +45,8 @@ def main():
     user = os.environ.get('ELEMENT_LOGIN')
     password = os.environ.get('ELEMENT_PASSWORD')
     drivers_url = os.environ.get('ELEMENT_DRIVERS_URL')
+    cars_url = os.environ.get('ELEMENT_CARS_URL')
+
     taxoparks = {
         'moscow': {
             'park_id': os.environ.get('MSK_PARK_ID'),
@@ -71,6 +73,7 @@ def main():
         }
     }
     range_for_update = os.environ.get('RANGE_FOR_UPDATE')
+    cars_ranges_for_update = os.environ.get('RANGE_CARS_FOR_UPDATE')
 
     try:
         element = el.Element(user, password)
@@ -80,6 +83,13 @@ def main():
         active_drivers = element.fetch_active_drivers(
             url=drivers_url, conditions_exclude=exclude_roster
         )
+        cars = element.fetch_active_cars(cars_url)
+        active_cars = cars[
+            [
+                'Model', 'Number', 'VIN', 'Gas', 'Region', 'Department',
+                'Status', 'SubStatus', 'Reason', 'Comment'
+            ]
+        ].values.tolist()
 
         for park in taxoparks.values():
             park_id, api_key, sheets_ids = park.values()
@@ -89,10 +99,16 @@ def main():
             drivers_records = roster.values.tolist()
 
             for sheet_id in sheets_ids:
-                ss.batch_clear_values(sheet_id, range_for_update)
+                ss.batch_clear_values(
+                    sheet_id, ranges=[range_for_update, cars_ranges_for_update]
+                )
                 ss.batch_update_values(
                     sheet_id, range_for_update, drivers_records
                 )
+                ss.batch_update_values(
+                    sheet_id, cars_ranges_for_update, active_cars
+                )
+
     except HttpError as ggl_http_err:
         logger.error('Ошибка подключения гугла: ', ggl_http_err)
     except requests.exceptions.HTTPError as http_err:
