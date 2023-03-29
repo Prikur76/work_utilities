@@ -72,35 +72,34 @@ def main():
     }
     range_for_update = os.environ.get('RANGE_FOR_UPDATE')
 
-    while True:
-        try:
-            element = el.Element(user, password)
-            exclude_roster = [
-                '', 'Комфорт', 'Подключашки 2 %', 'ПОДКЛЮЧАШКА 3%', 'Штатный'
-            ]
-            active_drivers = element.fetch_active_drivers(
-                url=drivers_url, conditions_exclude=exclude_roster
+    try:
+        element = el.Element(user, password)
+        exclude_roster = [
+            '', 'Комфорт', 'Подключашки 2 %', 'ПОДКЛЮЧАШКА 3%', 'Штатный'
+        ]
+        active_drivers = element.fetch_active_drivers(
+            url=drivers_url, conditions_exclude=exclude_roster
+        )
+
+        for park in taxoparks.values():
+            park_id, api_key, sheets_ids = park.values()
+            roster = create_roster_for_report(
+                park_id, api_key, active_drivers
             )
+            drivers_records = roster.values.tolist()
 
-            for park in taxoparks.values():
-                park_id, api_key, sheets_ids = park.values()
-                roster = create_roster_for_report(
-                    park_id, api_key, active_drivers
+            for sheet_id in sheets_ids:
+                ss.batch_clear_values(sheet_id, range_for_update)
+                ss.batch_update_values(
+                    sheet_id, range_for_update, drivers_records
                 )
-                drivers_records = roster.values.tolist()
-
-                for sheet_id in sheets_ids:
-                    ss.batch_clear_values(sheet_id, range_for_update)
-                    ss.batch_update_values(
-                        sheet_id, range_for_update, drivers_records
-                    )
-        except HttpError as ggl_http_err:
-            logger.error('Ошибка подключения гугла: ', ggl_http_err)
-        except requests.exceptions.HTTPError as http_err:
-            logger.error('Ошибка запроса: ', http_err)
-        except requests.exceptions.ConnectionError as connection_err:
-            logger.error('Lost HTTP connection: ', connection_err)
-            time.sleep(60)
+    except HttpError as ggl_http_err:
+        logger.error('Ошибка подключения гугла: ', ggl_http_err)
+    except requests.exceptions.HTTPError as http_err:
+        logger.error('Ошибка запроса: ', http_err)
+    except requests.exceptions.ConnectionError as connection_err:
+        logger.error('Lost HTTP connection: ', connection_err)
+        time.sleep(60)
 
 
 if __name__ == '__main__':
