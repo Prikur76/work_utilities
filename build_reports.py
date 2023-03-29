@@ -1,11 +1,14 @@
 import os
 import pandas as pd
+import numpy as np
+
 
 from dotenv import load_dotenv
 
 import element as el
 
 load_dotenv()
+xlsx_path = os.environ.get('XLSX_PATH')
 user = os.environ.get('ELEMENT_LOGIN')
 password = os.environ.get('ELEMENT_PASSWORD')
 
@@ -50,4 +53,9 @@ active_cars = cars[
     ]
 ]
 msk_cars = active_cars[active_cars.Department.isin(['МОСКВА'],)]
-print(len(msk_cars))
+# print(len(msk_cars))
+# print(msk_cars)
+grouped_msk_cars = msk_cars.groupby(['Status', 'SubStatus']).agg({
+    'VIN': 'count',
+})
+print(grouped_msk_cars)
