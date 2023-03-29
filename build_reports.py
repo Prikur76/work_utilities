@@ -43,19 +43,20 @@ taxoparks = {
 
 catalog_id = os.environ.get('CATALOG_SS_ID')
 car_ranges = os.environ.get('CATALOG_RANGES')
+cars_ranges_for_update = os.environ.get('RANGE_CARS_FOR_UPDATE')
 
 element = el.Element(user, password)
 cars = element.fetch_active_cars(cars_url)
 active_cars = cars[
     [
-        'Model', 'Number', 'VIN', 'Region', 'Department',
+        'Model', 'Number', 'VIN', 'Gas', 'Region', 'Department',
         'Status', 'SubStatus', 'Reason', 'Comment'
     ]
 ]
 msk_cars = active_cars[active_cars.Department.isin(['МОСКВА'],)]
 # print(len(msk_cars))
 # print(msk_cars)
-grouped_msk_cars = msk_cars.groupby(['Status', 'SubStatus']).agg({
-    'VIN': 'count',
-})
-print(grouped_msk_cars)
+# grouped_msk_cars = msk_cars.groupby(['Status', 'SubStatus']).agg({
+#     'VIN': 'count',
+# })
+# print(grouped_msk_cars)
