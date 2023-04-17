@@ -46,6 +46,7 @@ car_ranges = os.environ.get('CATALOG_RANGES')
 cars_ranges_for_update = os.environ.get('RANGE_CARS_FOR_UPDATE')
 
 element = el.Element(user, password)
+region = os.environ.get('EKB_REGION')
 cars = element.fetch_active_cars(cars_url)
 active_cars = cars[
     [

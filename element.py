@@ -59,10 +59,11 @@ class Element():
         cars_roster = self.get_cars(url, inn)
         cars = pd.DataFrame(cars_roster)
         filters = cars.Activity & \
-                  ~cars.DisableDocumentStatus & \
-                  ~cars.DisableContract & \
-                  ~cars.Department.isin(['ЛИЧНАЯ',]) & \
-                  ~cars.Status.isin(['АРХИВ', ])
+            ~cars.DisableDocumentStatus & \
+            ~cars.DisableContract & \
+            ~cars.Department.isin(['ЛИЧНАЯ', ]) & \
+            ~cars.Status.isin(['АРХИВ', ])
+
         return cars[filters] \
             .sort_values(by='Code', ascending=True)
 

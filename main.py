@@ -51,12 +51,14 @@ def main():
         'moscow': {
             'park_id': os.environ.get('MSK_PARK_ID'),
             'api_key': os.environ.get('MSK_X_API_KEY'),
-            'sheets_ids': [os.environ.get('MSK_SPREADSHEET_ID')]
+            'sheets_ids': [os.environ.get('MSK_SPREADSHEET_ID')],
+            'region': os.environ.get('MSK_REGION'),
         },
         'ekaterinburg': {
             'park_id': os.environ.get('EKB_PARK_ID'),
             'api_key': os.environ.get('EKB_X_API_KEY'),
-            'sheets_ids': [os.environ.get('EKB_SPREADSHEET_ID')]
+            'sheets_ids': [os.environ.get('EKB_SPREADSHEET_ID')],
+            'region': os.environ.get('EKB_REGION')
         },
         'yaroslavl': {
             'park_id': os.environ.get('YAR_PARK_ID'),
@@ -64,12 +66,14 @@ def main():
             'sheets_ids': [
                 os.environ.get('YAR_SPREADSHEET_ID'),
                 os.environ.get('KSTR_SPREADSHEET_ID')
-            ]
+            ],
+            'region': os.environ.get('YAR_REGION')
         },
         'kirov': {
             'park_id': os.environ.get('KRV_PARK_ID'),
             'api_key': os.environ.get('KRV_X_API_KEY'),
-            'sheets_ids': [os.environ.get('KRV_SPREADSHEET_ID')]
+            'sheets_ids': [os.environ.get('KRV_SPREADSHEET_ID')],
+            'region': os.environ.get('KRV_REGION')
         }
     }
     range_for_update = os.environ.get('RANGE_FOR_UPDATE')
@@ -89,14 +93,16 @@ def main():
                 'Model', 'Number', 'VIN', 'Gas', 'Region', 'Department',
                 'Status', 'SubStatus', 'Reason', 'Comment'
             ]
-        ].values.tolist()
+        ]
 
         for park in taxoparks.values():
-            park_id, api_key, sheets_ids = park.values()
+            park_id, api_key, sheets_ids, region = park.values()
             roster = create_roster_for_report(
                 park_id, api_key, active_drivers
             )
             drivers_records = roster.values.tolist()
+            region_filter = (active_cars.Region == region)
+            filtered_cars = active_cars[region_filter].values.tolist()
 
             for sheet_id in sheets_ids:
                 ss.batch_clear_values(
@@ -106,7 +112,7 @@ def main():
                     sheet_id, range_for_update, drivers_records
                 )
                 ss.batch_update_values(
-                    sheet_id, cars_ranges_for_update, active_cars
+                    sheet_id, cars_ranges_for_update, filtered_cars
                 )
 
     except HttpError as ggl_http_err:
@@ -119,8 +125,9 @@ def main():
 
 
 if __name__ == '__main__':
-    schedule.every().hour.at('29:00').do(main)
-    schedule.every().hour.at('59:00').do(main)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    main()
+    # schedule.every().hour.at('29:00').do(main)
+    # schedule.every().hour.at('59:00').do(main)
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)
