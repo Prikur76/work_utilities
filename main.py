@@ -90,7 +90,7 @@ def main():
         cars = element.fetch_active_cars(cars_url)
         active_cars = cars[
             [
-                'Model', 'Number', 'VIN', 'Gas', 'Region', 'Department',
+                'Model', 'Number', 'VIN', 'Gas', 'Region',
                 'Status', 'SubStatus', 'Reason', 'Comment'
             ]
         ]
