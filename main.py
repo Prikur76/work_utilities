@@ -46,8 +46,13 @@ def main():
     password = os.environ.get('ELEMENT_PASSWORD')
     drivers_url = os.environ.get('ELEMENT_DRIVERS_URL')
     cars_url = os.environ.get('ELEMENT_CARS_URL')
-
     taxoparks = {
+        'reports': {
+            'park_id': None,
+            'api_key': None,
+            'sheets_ids': [os.environ.get('REPORT_SPREADSHEET_ID')],
+            'region': None,
+        },
         'moscow': {
             'park_id': os.environ.get('MSK_PARK_ID'),
             'api_key': os.environ.get('MSK_X_API_KEY'),
@@ -90,30 +95,40 @@ def main():
         cars = element.fetch_active_cars(cars_url)
         active_cars = cars[
             [
-                'Model', 'Number', 'VIN', 'Gas', 'Region',
-                'Status', 'SubStatus', 'Reason', 'Comment'
+                'Model', 'Number', 'VIN', 'YearCar', 'MileAge',
+                'Region', 'Status', 'SubStatus', 'Reason',
+                'Comment',
             ]
         ]
 
         for park in taxoparks.values():
             park_id, api_key, sheets_ids, region = park.values()
-            roster = create_roster_for_report(
-                park_id, api_key, active_drivers
-            )
-            drivers_records = roster.values.tolist()
-            region_filter = (active_cars.Region == region)
-            filtered_cars = active_cars[region_filter].values.tolist()
-
-            for sheet_id in sheets_ids:
-                ss.batch_clear_values(
-                    sheet_id, ranges=[range_for_update, cars_ranges_for_update]
+            if park_id and api_key and region:
+                roster = create_roster_for_report(
+                    park_id, api_key, active_drivers
                 )
-                ss.batch_update_values(
-                    sheet_id, range_for_update, drivers_records
-                )
-                ss.batch_update_values(
-                    sheet_id, cars_ranges_for_update, filtered_cars
-                )
+                drivers_records = roster.values.tolist()
+                region_filter = (active_cars.Region == region)
+                cars_for_upload = active_cars[region_filter].values.tolist()
+                for sheet_id in sheets_ids:
+                    ss.batch_clear_values(
+                        sheet_id, ranges=[range_for_update, cars_ranges_for_update]
+                    )
+                    ss.batch_update_values(
+                        sheet_id, range_for_update, drivers_records
+                    )
+                    ss.batch_update_values(
+                        sheet_id, cars_ranges_for_update, cars_for_upload
+                    )
+            else:
+                cars_for_upload = active_cars.values.tolist()
+                for sheet_id in sheets_ids:
+                    ss.batch_clear_values(
+                        sheet_id, ranges=[cars_ranges_for_update]
+                    )
+                    ss.batch_update_values(
+                        sheet_id, cars_ranges_for_update, cars_for_upload
+                    )
 
     except HttpError as ggl_http_err:
         logger.error('Ошибка подключения гугла: ', ggl_http_err)
