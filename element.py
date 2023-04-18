@@ -63,9 +63,11 @@ class Element():
             ~cars.DisableContract & \
             ~cars.Department.isin(['ЛИЧНАЯ', ]) & \
             ~cars.Status.isin(['АРХИВ', ])
+        filtered_cars = cars[filters].sort_values(by='Code', ascending=True)
+        filtered_cars.loc[:, 'YearCar'] = filtered_cars['YearCar']\
+            .apply(tools.format_date_string, format='%Y')
+        return filtered_cars
 
-        return cars[filters] \
-            .sort_values(by='Code', ascending=True)
 
     def fetch_waybills(self, url, inn=None, phone=None,
                        start_date=None, end_date=None):
