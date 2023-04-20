@@ -140,9 +140,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
-    # schedule.every().hour.at('29:00').do(main)
-    # schedule.every().hour.at('59:00').do(main)
-    # while True:
-    #     schedule.run_pending()
-    #     time.sleep(1)
+    schedule.every().hour.at('29:00').do(main)
+    schedule.every().hour.at('59:00').do(main)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
