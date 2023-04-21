@@ -145,5 +145,8 @@ if __name__ == '__main__':
     schedule.every().hour.at('44:00').do(main)
     schedule.every().hour.at('59:00').do(main)
     while True:
-        schedule.run_pending()
-        time.sleep(1)
+        try:
+            schedule.run_pending()
+            time.sleep(1)
+        except requests.exceptions.ChunkedEncodingError:
+            print('restarting')
