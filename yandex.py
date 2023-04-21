@@ -49,24 +49,29 @@ class Taximeter:
                 }
             ]
         }
-        response = requests.post(url=url, json=payload, headers=headers)
-        response.raise_for_status()
-        if response:
-            roster = response.json()
-            drivers_profiles = roster['driver_profiles']
-            total = roster['total']
-            if total > 1000:
-                offsets = [i for i in range(1, total, 1000)]
-                for offset in offsets:
-                    payload['offset'] = offset
-                    payload['limit'] = 1000
-                    offset_response = requests.post(url=url, json=payload,
-                                             headers=headers)
-                    offset_response.raise_for_status()
-                    driver_profiles = offset_response.json()['driver_profiles']
-                    drivers_profiles.extend(driver_profiles)
-            return drivers_profiles
-        raise requests.exceptions.HTTPError('Request failed')
+        with requests.post(url=url, json=payload,
+                           headers=headers, stream=True) as response:
+            response.raise_for_status()
+            if response:
+                roster = response.json()
+                drivers_profiles = roster['driver_profiles']
+                total = roster['total']
+                if total > 1000:
+                    offsets = [i for i in range(1, total, 1000)]
+                    for offset in offsets:
+                        payload['offset'] = offset
+                        payload['limit'] = 1000
+                        with requests.post(
+                                url=url,
+                                json=payload,
+                                headers=headers,
+                                stream=True) as offset_response:
+                            offset_response.raise_for_status()
+                            driver_profiles = \
+                                offset_response.json()['driver_profiles']
+                        drivers_profiles.extend(driver_profiles)
+                return drivers_profiles
+            raise requests.exceptions.HTTPError('Request failed')
 
     def fetch_active_balances(self):
         """Возвращает список активных водителей."""
@@ -105,24 +110,28 @@ class Taximeter:
                 'text': ''
             }
         }
-        response = requests.post(url=url, json=payload, headers=headers)
-        response.raise_for_status()
-        if response:
-            roster = response.json()
-            cars = roster['cars']
-            total = roster['total']
-            if total > 1000:
-                offsets = [i for i in range(1, total, 1000)]
-                for offset in offsets:
-                    payload['offset'] = offset
-                    payload['limit'] = 1000
-                    offset_response = requests.post(url=url, json=payload,
-                                             headers=headers)
-                    offset_response.raise_for_status()
-                    cars_fragment = offset_response.json()['cars']
-                    cars.extend(cars_fragment)
-            return cars
-        raise requests.exceptions.HTTPError('Request failed')
+        with requests.post(url=url, json=payload,
+                           headers=headers, stream=True) as response:
+            response.raise_for_status()
+            if response:
+                roster = response.json()
+                cars = roster['cars']
+                total = roster['total']
+                if total > 1000:
+                    offsets = [i for i in range(1, total, 1000)]
+                    for offset in offsets:
+                        payload['offset'] = offset
+                        payload['limit'] = 1000
+                        with requests.post(
+                                url=url,
+                                json=payload,
+                                headers=headers,
+                                stream=True) as offset_response:
+                            offset_response.raise_for_status()
+                            cars_fragment = offset_response.json()['cars']
+                        cars.extend(cars_fragment)
+                return cars
+            raise requests.exceptions.HTTPError('Request failed')
 
     def fetch_workrules(self):
         """Возвращает список условий работы. Метод GET"""
