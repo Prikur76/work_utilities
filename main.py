@@ -112,7 +112,8 @@ def main():
                 cars_for_upload = active_cars[region_filter].values.tolist()
                 for sheet_id in sheets_ids:
                     ss.batch_clear_values(
-                        sheet_id, ranges=[range_for_update, cars_ranges_for_update]
+                        sheet_id,
+                        ranges=[range_for_update, cars_ranges_for_update]
                     )
                     ss.batch_update_values(
                         sheet_id, range_for_update, drivers_records
