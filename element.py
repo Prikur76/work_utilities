@@ -14,11 +14,11 @@ class Element():
     def get_drivers(self, url):
         """Возвращает список водителей 1с:Элемент в формате .json"""
         auth = (self.user, self.password)
-        response = requests.get(url=url, auth=auth, stream=True)
-        response.raise_for_status()
-        if response:
-            return response.json()
-        raise requests.exceptions.HTTPError('Request failed')
+        with requests.get(url=url, auth=auth, stream=True) as response:
+            response.raise_for_status()
+            if response:
+                return response.json()
+            raise requests.exceptions.HTTPError('Request failed')
 
     def fetch_active_drivers(self, url, conditions_exclude=['', ]):
         """Возвращает отфильтрованный список работающих водителей"""
@@ -32,8 +32,8 @@ class Element():
         filtered_roster = drivers[filters]
         filtered_roster.loc[:, 'DatePL'] = filtered_roster['DatePL'] \
             .apply(tools.format_date_string, format='%Y-%m-%d')
-        filtered_roster.loc[:, 'PhoneNumber'] = filtered_roster['PhoneNumber'] \
-            .apply(tools.remove_chars)
+        filtered_roster.loc[:, 'PhoneNumber'] = \
+            filtered_roster['PhoneNumber'].apply(tools.remove_chars)
         active_drivers = filtered_roster[
             [
                 'DefaultID', 'FIO', 'PhoneNumber', 'DatePL',
@@ -48,11 +48,12 @@ class Element():
             'inn': inn
         }
         auth = (self.user, self.password)
-        response = requests.get(url=url, params=params, auth=auth, stream=True)
-        response.raise_for_status()
-        if response:
-            return response.json()
-        raise requests.exceptions.HTTPError('Request failed')
+        with requests.get(url=url, params=params,
+                          auth=auth, stream=True) as response:
+            response.raise_for_status()
+            if response:
+                return response.json()
+            raise requests.exceptions.HTTPError('Request failed')
 
     def fetch_active_cars(self, url, inn=None):
         """Возвращает список активных машин. Метод GET"""
@@ -68,7 +69,6 @@ class Element():
             .apply(tools.format_date_string, format='%Y')
         return filtered_cars
 
-
     def fetch_waybills(self, url, inn=None, phone=None,
                        start_date=None, end_date=None):
         """
@@ -82,9 +82,9 @@ class Element():
             'Date1': start_date,
             'Date2': end_date
         }
-        response = requests.post(url=url, json=payload,
-                                 auth=auth, stream=True)
-        response.raise_for_status()
-        if response:
-            return response.json()
-        raise requests.exceptions.HTTPError('Request failed')
+        with requests.post(url=url, json=payload,
+                           auth=auth, stream=True) as response:
+            response.raise_for_status()
+            if response:
+                return response.json()
+            raise requests.exceptions.HTTPError('Request failed')
