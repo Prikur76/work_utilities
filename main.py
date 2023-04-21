@@ -135,6 +135,8 @@ def main():
         logger.error('Ошибка подключения гугла: ', ggl_http_err)
     except requests.exceptions.HTTPError as http_err:
         logger.error('Ошибка запроса: ', http_err)
+    except requests.exceptions.ChunkedEncodingError as chunked_err:
+        logger.error('Ошибка обработки пакета: остановка программы')
     except requests.exceptions.ConnectionError as connection_err:
         logger.error('Lost HTTP connection: ', connection_err)
         time.sleep(60)
@@ -146,8 +148,5 @@ if __name__ == '__main__':
     schedule.every().hour.at('44:00').do(main)
     schedule.every().hour.at('59:00').do(main)
     while True:
-        try:
-            schedule.run_pending()
-            time.sleep(1)
-        except requests.exceptions.ChunkedEncodingError:
-            print('restarting')
+        schedule.run_pending()
+        time.sleep(1)
