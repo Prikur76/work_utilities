@@ -14,7 +14,7 @@ class Element():
     def get_drivers(self, url):
         """Возвращает список водителей 1с:Элемент в формате .json"""
         auth = (self.user, self.password)
-        response = requests.get(url=url, auth=auth)
+        response = requests.get(url=url, auth=auth, stream=True)
         response.raise_for_status()
         if response:
             return response.json()
@@ -48,7 +48,7 @@ class Element():
             'inn': inn
         }
         auth = (self.user, self.password)
-        response = requests.get(url=url, params=params, auth=auth)
+        response = requests.get(url=url, params=params, auth=auth, stream=True)
         response.raise_for_status()
         if response:
             return response.json()
@@ -83,7 +83,7 @@ class Element():
             'Date2': end_date
         }
         response = requests.post(url=url, json=payload,
-                                 auth=auth)
+                                 auth=auth, stream=True)
         response.raise_for_status()
         if response:
             return response.json()
