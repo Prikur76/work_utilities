@@ -69,7 +69,7 @@ class Taximeter:
                             offset_response.raise_for_status()
                             driver_profiles = \
                                 offset_response.json()['driver_profiles']
-                        drivers_profiles.extend(driver_profiles)
+                            drivers_profiles.extend(driver_profiles)
                 return drivers_profiles
             raise requests.exceptions.HTTPError('Request failed')
 
@@ -129,7 +129,7 @@ class Taximeter:
                                 stream=True) as offset_response:
                             offset_response.raise_for_status()
                             cars_fragment = offset_response.json()['cars']
-                        cars.extend(cars_fragment)
+                            cars.extend(cars_fragment)
                 return cars
             raise requests.exceptions.HTTPError('Request failed')
 

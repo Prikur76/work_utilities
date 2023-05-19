@@ -132,13 +132,25 @@ def main():
                     )
 
     except HttpError as ggl_http_err:
-        logger.error('Ошибка подключения гугла: ', ggl_http_err)
+        logger.error(
+            msg=f'Ошибка подключения гугла: {ggl_http_err}',
+            stack_info=False
+        )
     except requests.exceptions.HTTPError as http_err:
-        logger.error('Ошибка запроса: ', http_err)
+        logger.error(
+            msg=f'Ошибка запроса: {http_err}',
+            stack_info=False
+        )
     except requests.exceptions.ChunkedEncodingError as chunked_err:
-        logger.error('Ошибка обработки пакета: ', chunked_err)
+        logger.error(
+            msg=f'Ошибка обработки пакета: {chunked_err}',
+            stack_info=False
+        )
     except requests.exceptions.ConnectionError as connection_err:
-        logger.error('Lost HTTP connection: ', connection_err)
+        logger.error(
+            msg=f'Lost HTTP connection: {connection_err}',
+            stack_info=False
+        )
         time.sleep(60)
 
 
