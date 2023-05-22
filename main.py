@@ -146,18 +146,18 @@ def main():
             msg=f'Ошибка обработки пакета: {chunked_err}',
             stack_info=False
         )
-    except requests.exceptions.ConnectionError as connection_err:
-        logger.error(
-            msg=f'Lost HTTP connection: {connection_err}',
-            stack_info=False
-        )
-        time.sleep(60)
     except requests.exceptions.Timeout as timeout_err:
         logger.error(
             msg=f'Timeout: {timeout_err}',
             stack_info=False
         )
         time.sleep(300)
+    except requests.exceptions.ConnectionError as connection_err:
+        logger.error(
+            msg=f'Lost HTTP connection: {connection_err}',
+            stack_info=False
+        )
+        time.sleep(60)
 
 
 if __name__ == '__main__':
