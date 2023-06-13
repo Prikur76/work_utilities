@@ -11,7 +11,7 @@ socket.setdefaulttimeout(150)
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-service_account_file = os.path.join(BASE_DIR, 'work_creds.json')
+service_account_file = os.path.join(BASE_DIR, 'creds.json')
 
 
 def create_build_connection():
