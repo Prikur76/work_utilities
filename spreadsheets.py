@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import os
 import socket
 
 from google.oauth2 import service_account
@@ -9,6 +10,10 @@ from googleapiclient.errors import HttpError
 socket.setdefaulttimeout(150)
 
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+service_account_file = os.path.join(BASE_DIR, 'creds.json')
+
+
 def create_build_connection():
     """
         Проходим аутентификацию и возвращаем объект BUILD
@@ -16,7 +21,7 @@ def create_build_connection():
     """
     scopes = ['https://www.googleapis.com/auth/spreadsheets']
     creds = service_account.Credentials\
-        .from_service_account_file('creds.json', scopes=scopes)
+        .from_service_account_file(service_account_file, scopes=scopes)
     return build('sheets', 'v4', credentials=creds,
                  static_discovery=False, cache_discovery=False)
 
