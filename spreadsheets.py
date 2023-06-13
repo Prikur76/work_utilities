@@ -1,8 +1,12 @@
 from __future__ import print_function
 
+import socket
+
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+
+socket.setdefaulttimeout(150)
 
 
 def create_build_connection():
