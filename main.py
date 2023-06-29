@@ -74,12 +74,6 @@ def main():
             ],
             'region': os.environ.get('YAR_REGION')
         },
-        'kirov': {
-            'park_id': os.environ.get('KRV_PARK_ID'),
-            'api_key': os.environ.get('KRV_X_API_KEY'),
-            'sheets_ids': [os.environ.get('KRV_SPREADSHEET_ID')],
-            'region': os.environ.get('KRV_REGION')
-        }
     }
     range_for_update = os.environ.get('RANGE_FOR_UPDATE')
     cars_ranges_for_update = os.environ.get('RANGE_CARS_FOR_UPDATE')
