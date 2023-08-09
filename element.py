@@ -16,9 +16,7 @@ class Element():
         auth = (self.user, self.password)
         with requests.get(url=url, auth=auth, stream=True) as response:
             response.raise_for_status()
-            if response:
-                return response.json()
-            raise requests.exceptions.HTTPError('Request failed')
+            return response.json()
 
     def fetch_active_drivers(self, url, conditions_exclude=['', ]):
         """Возвращает отфильтрованный список работающих водителей"""
@@ -51,9 +49,7 @@ class Element():
         with requests.get(url=url, params=params,
                           auth=auth, stream=True) as response:
             response.raise_for_status()
-            if response:
-                return response.json()
-            raise requests.exceptions.HTTPError('Request failed')
+            return response.json()
 
     def fetch_active_cars(self, url, inn=None):
         """Возвращает список активных машин. Метод GET"""
@@ -68,23 +64,3 @@ class Element():
         filtered_cars.loc[:, 'YearCar'] = filtered_cars['YearCar']\
             .apply(tools.format_date_string, format='%Y')
         return filtered_cars
-
-    def fetch_waybills(self, url, inn=None, phone=None,
-                       start_date=None, end_date=None):
-        """
-        !!!МЕТОД НЕ РАБОТАЕТ(код ошибки: 500)!!!
-        Возвращает список путевых листов
-        """
-        auth = (self.user, self.password)
-        payload = {
-            'CompanyINN': inn,
-            'PhoneNumber': phone,
-            'Date1': start_date,
-            'Date2': end_date
-        }
-        with requests.post(url=url, json=payload,
-                           auth=auth, stream=True) as response:
-            response.raise_for_status()
-            if response:
-                return response.json()
-            raise requests.exceptions.HTTPError('Request failed')
