@@ -7,7 +7,7 @@ from environs import Env
 from googleapiclient.errors import HttpError
 
 import element as el
-import settings as set
+import settings as st
 import spreadsheets as ss
 import yandex as ya
 
@@ -52,12 +52,12 @@ def update_google_sheet(active_cars, active_drivers, park):
 
     for sheet_id in sheets_ids:
         ss.batch_clear_values(sheet_id,
-                              ranges=[set.DRIVERS_RANGE_FOR_UPDATE])
+                              ranges=[st.DRIVERS_RANGE_FOR_UPDATE])
         ss.batch_update_values(sheet_id,
-                               set.DRIVERS_RANGE_FOR_UPDATE,
+                               st.DRIVERS_RANGE_FOR_UPDATE,
                                park_drivers)
         ss.batch_update_values(sheet_id,
-                               set.CARS_RANGE_FOR_UPDATE,
+                               st.CARS_RANGE_FOR_UPDATE,
                                park_cars)
 
 
@@ -67,14 +67,14 @@ def main():
         level=logging.INFO
     )
 
-    element = el.Element(set.USER, set.PASSWORD)
-    reports_sheets_ids = set.REPORTS_SHEETS_IDS
+    element = el.Element(st.USER, st.PASSWORD)
+    reports_sheets_ids = st.REPORTS_SHEETS_IDS
 
     try:
         active_drivers = element.fetch_active_drivers(
-            url=set.DRIVERS_URL,
-            conditions_exclude=set.EXCLUDE_ROSTER)
-        element_cars = element.fetch_active_cars(set.CARS_URL)
+            url=st.DRIVERS_URL,
+            conditions_exclude=st.EXCLUDE_ROSTER)
+        element_cars = element.fetch_active_cars(st.CARS_URL)
         active_element_cars = element_cars[
             [
                 'Model', 'Number', 'VIN', 'YearCar', 'MileAge',
@@ -87,18 +87,18 @@ def main():
         for sheet_id in reports_sheets_ids:
 
             ss.batch_clear_values(sheet_id,
-                                  ranges=[set.CARS_RANGE_FOR_UPDATE])
+                                  ranges=[st.CARS_RANGE_FOR_UPDATE])
 
             ss.batch_update_values(sheet_id,
-                                   set.CARS_RANGE_FOR_UPDATE,
+                                   st.CARS_RANGE_FOR_UPDATE,
                                    all_active_cars)
 
         update_google_sheet(active_element_cars,
-                            active_drivers, set.MSK_PARKS)
+                            active_drivers, st.MSK_PARKS)
         update_google_sheet(active_element_cars,
-                            active_drivers, set.EKAT_PARKS)
+                            active_drivers, st.EKAT_PARKS)
         update_google_sheet(active_element_cars,
-                            active_drivers, set.YAR_PARKS)
+                            active_drivers, st.YAR_PARKS)
 
     except HttpError as ggl_http_err:
         logger.error(msg=f'Ошибка подключения гугла: {ggl_http_err}',
