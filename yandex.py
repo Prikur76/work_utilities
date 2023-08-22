@@ -14,8 +14,7 @@ class Taximeter:
 
     def fetch_drivers_profiles(self):
         """Возвращает профили водителей. Метод POST"""
-        url = 'https://fleet-api.taxi.yandex.net/v1/' \
-              'parks/driver-profiles/list'
+        url = 'https://fleet-api.taxi.yandex.net/v1/parks/driver-profiles/list'
         headers = {
             'X-Client-ID': self.client_id,
             'X-API-Key': self.api_key,
@@ -52,26 +51,25 @@ class Taximeter:
         with requests.post(url=url, json=payload,
                            headers=headers, stream=True) as response:
             response.raise_for_status()
-            if response:
-                roster = response.json()
-                drivers_profiles = roster['driver_profiles']
-                total = roster['total']
-                if total > 1000:
-                    offsets = [i for i in range(1, total, 1000)]
-                    for offset in offsets:
-                        payload['offset'] = offset
-                        payload['limit'] = 1000
-                        with requests.post(
-                                url=url,
-                                json=payload,
-                                headers=headers,
-                                stream=True) as offset_response:
-                            offset_response.raise_for_status()
-                            driver_profiles = \
-                                offset_response.json()['driver_profiles']
-                            drivers_profiles.extend(driver_profiles)
-                return drivers_profiles
-            raise requests.exceptions.HTTPError('Request failed')
+
+            roster = response.json()
+            drivers_profiles = roster['driver_profiles']
+            total = roster['total']
+            if total > 1000:
+                offsets = [i for i in range(1, total, 1000)]
+                for offset in offsets:
+                    payload['offset'] = offset
+                    payload['limit'] = 1000
+                    with requests.post(
+                            url=url,
+                            json=payload,
+                            headers=headers,
+                            stream=True) as offset_response:
+                        offset_response.raise_for_status()
+                        driver_profiles = \
+                            offset_response.json()['driver_profiles']
+                        drivers_profiles.extend(driver_profiles)
+            return drivers_profiles
 
     def fetch_active_balances(self):
         """Возвращает список активных водителей."""
@@ -113,25 +111,24 @@ class Taximeter:
         with requests.post(url=url, json=payload,
                            headers=headers, stream=True) as response:
             response.raise_for_status()
-            if response:
-                roster = response.json()
-                cars = roster['cars']
-                total = roster['total']
-                if total > 1000:
-                    offsets = [i for i in range(1, total, 1000)]
-                    for offset in offsets:
-                        payload['offset'] = offset
-                        payload['limit'] = 1000
-                        with requests.post(
-                                url=url,
-                                json=payload,
-                                headers=headers,
-                                stream=True) as offset_response:
-                            offset_response.raise_for_status()
-                            cars_fragment = offset_response.json()['cars']
-                            cars.extend(cars_fragment)
-                return cars
-            raise requests.exceptions.HTTPError('Request failed')
+
+            roster = response.json()
+            cars = roster['cars']
+            total = roster['total']
+            if total > 1000:
+                offsets = [i for i in range(1, total, 1000)]
+                for offset in offsets:
+                    payload['offset'] = offset
+                    payload['limit'] = 1000
+                    with requests.post(
+                            url=url,
+                            json=payload,
+                            headers=headers,
+                            stream=True) as offset_response:
+                        offset_response.raise_for_status()
+                        cars_fragment = offset_response.json()['cars']
+                        cars.extend(cars_fragment)
+            return cars
 
     def fetch_workrules(self):
         """Возвращает список условий работы. Метод GET"""
@@ -147,9 +144,7 @@ class Taximeter:
         }
         response = requests.get(url=url, params=payload, headers=headers)
         response.raise_for_status()
-        if response:
-            return response.json()
-        raise requests.exceptions.HTTPError('Request failed')
+        return response.json()
 
     def fetch_transaction_categories(self):
         """Возвращает список категорий транзакций. Метод POST"""
@@ -175,49 +170,4 @@ class Taximeter:
         }
         response = requests.post(url=url, json=payload, headers=headers)
         response.raise_for_status()
-        if response:
-            return response.json()['categories']
-        raise requests.exceptions.HTTPError('Request failed')
-
-    def fetch_vehicle_profile(self, vehicle_id):
-        """
-        !!!НЕ РАБОТАЕТ, NEED TEST!!!
-        Возвращает информацию об автомобиле.
-        Метод GET
-        """
-        url = 'https://fleet-api.taxi.yandex.net/v2/parks/vehicles/car'
-        headers = {
-            'X-Park-ID': self.park_id,
-            'X-Client-ID': self.client_id,
-            'X-API-Key': self.api_key
-        }
-        params = {
-            'vehicle_id': vehicle_id
-        }
-        response = requests.get(url=url, params=params, headers=headers)
-        response.raise_for_status()
-        if response:
-            return response.json()
-        raise requests.exceptions.HTTPError('Request failed')
-
-    def fetch_contractor_profile(self, contractor_profile_id):
-        """
-        !!!НЕ РАБОТАЕТ, NEED TEST!!!
-        Возвращает профиль водителя/курьера.
-        Метод GET
-        """
-        url = 'https://fleet-api.taxi.yandex.net/' \
-              'v2/parks/contractors/driver-profile'
-        headers = {
-            'X-Park-ID': self.park_id,
-            'X-Client-ID': self.client_id,
-            'X-API-Key': self.api_key
-        }
-        params = {
-            'contractor_profile_id': contractor_profile_id
-        }
-        response = requests.get(url=url, params=params, headers=headers)
-        response.raise_for_status()
-        if response:
-            return response.json()
-        raise requests.exceptions.HTTPError('Request failed')
+        return response.json()['categories']
