@@ -32,7 +32,7 @@ def create_roster_for_report(park_id, api_key, active_drivers):
     ]\
         .sort_values(by=['Car', 'DatePL'],
                      ascending=[True, False])\
-        .drop_duplicates()
+        .drop_duplicates(keep='first')
     return sorted_balances
 
 def update_google_sheet(active_cars, active_drivers, park):
@@ -81,7 +81,7 @@ def main():
                 'Region', 'Status', 'SubStatus', 'Reason',
                 'Comment',
             ]
-        ].drop_duplicates(keep='first')
+        ].drop_duplicates(subset=['VIN'], keep='first')
         all_active_cars = active_element_cars.values.tolist()
 
         for sheet_id in reports_sheets_ids:

@@ -14,6 +14,7 @@ class Element():
     def get_drivers(self, url):
         """Возвращает список водителей 1с:Элемент в формате .json"""
         auth = (self.user, self.password)
+        # headers = {'Accept': 'application/json'}
         with requests.get(url=url, auth=auth, stream=True) as response:
             response.raise_for_status()
             return response.json()
@@ -49,7 +50,8 @@ class Element():
         with requests.get(url=url, params=params,
                           auth=auth, stream=True) as response:
             response.raise_for_status()
-            return response.json()
+            cars = response.json()
+            return cars
 
     def fetch_active_cars(self, url, inn=None):
         """Возвращает список активных машин. Метод GET"""
