@@ -81,7 +81,7 @@ def main():
                 'Region', 'Status', 'SubStatus', 'Reason',
                 'Comment',
             ]
-        ]
+        ].drop_duplicates(keep='first')
         all_active_cars = active_element_cars.values.tolist()
 
         for sheet_id in reports_sheets_ids:
