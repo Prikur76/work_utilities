@@ -81,13 +81,10 @@ class Taximeter:
         roster = [
             {
                 'ya_id': driver['driver_profile']['id'],
-                'ya_balance': driver['accounts'][0]['balance'],
+                'ya_balance': float(driver['accounts'][0]['balance']) if 'accounts' in driver.keys() else 0.0,
             } for driver in working_drivers
         ]
         balances = pd.DataFrame(roster)
-        balances['ya_balance'] = pd.to_numeric(
-            balances['ya_balance'], downcast='integer'
-        )
         return balances
 
     def fetch_cars(self):
