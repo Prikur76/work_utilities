@@ -99,6 +99,8 @@ def main():
                             active_drivers, st.EKAT_PARKS)
         update_google_sheet(active_element_cars,
                             active_drivers, st.YAR_PARKS)
+        update_google_sheet(active_element_cars,
+                            active_drivers, st.CHLB_PARKS)
 
     except HttpError as ggl_http_err:
         logger.error(msg=f'Ошибка подключения гугла: {ggl_http_err}',
@@ -122,4 +124,5 @@ def main():
 if __name__ == '__main__':
     while True:
         main()
+        print('Засыпаем 15 минут')
         time.sleep(900)

@@ -43,6 +43,17 @@ EKAT_PARKS = {
     'sheets_ids': env.list('EKB_SPREADSHEET_ID'),
 }
 
+CHLB_PARKS = {
+    'region': env.str('CHLB_REGION'),
+    'yandex': [
+        {
+            'park_id': env.str('CHLB_PARK_ID'),
+            'api_key': env.str('CHLB_X_API_KEY'),
+        },
+    ],
+    'sheets_ids': env.list('CHLB_SPREADSHEET_ID'),
+}
+
 YAR_PARKS = {
     'yandex': [
         {
