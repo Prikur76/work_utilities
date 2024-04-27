@@ -2,7 +2,7 @@
 import logging
 import time
 from datetime import datetime
-
+import pytz
 import numpy as np
 import requests
 from googleapiclient.errors import HttpError
@@ -73,8 +73,10 @@ def main():
             lambda row:  tl.format_license_detail(row), axis=1)
         active_cars['CarInfo'] = active_cars.apply(
             lambda row: tl.format_car_info(row), axis=1)
-        active_cars['StatusDetail'] = active_cars.apply(lambda row: tl.format_status_detail(row), axis=1)
-        active_cars['DateUpload'] = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
+        active_cars['StatusDetail'] = active_cars.apply(
+            lambda row: tl.format_status_detail(row), axis=1)
+        active_cars['DateUpload'] = datetime.now(pytz.timezone('Europe/Moscow'))\
+            .strftime("%d.%m.%Y %H:%M:%S")
 
         # Объединяем данные водителей и машин, сортируем и удаляем дубликаты
         merged_roster = active_cars.merge(
