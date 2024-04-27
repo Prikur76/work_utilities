@@ -33,12 +33,7 @@ class Element():
             .apply(tools.format_date_string, format='%Y-%m-%d')
         filtered_roster.loc[:, 'PhoneNumber'] = \
             filtered_roster['PhoneNumber'].apply(tools.remove_chars)
-        active_drivers = filtered_roster[
-            [
-                'DefaultID', 'FIO', 'PhoneNumber', 'DatePL',
-                'ConsolidBalance', 'Car', 'NameConditionWork',
-            ]
-        ].sort_values(by=['DatePL'], ascending=[True])
+        active_drivers = filtered_roster.sort_values(by=['FIO'], ascending=[True])
         return active_drivers
 
     def get_cars(self, url, inn=None):
