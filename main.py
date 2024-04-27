@@ -123,5 +123,4 @@ def main():
 if __name__ == '__main__':
     while True:
         main()
-        # print('Засыпаем 5 минут')
         time.sleep(300)
