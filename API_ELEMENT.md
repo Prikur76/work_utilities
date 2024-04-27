@@ -61,9 +61,12 @@
 ## Получение списка машин
 
 ```
-https://taksi.0nalog.com:1703/<YOUR COMPANY>/hs/Car/v1/Get - GET запрос, получить список всех ТС в базе
-http://taksi.0nalog.com:1702/<YOUR COMPANY>/hs/Car/v1/Get
-http://taksi.0nalog.com:1702/<YOUR COMPANY>/hs/Car/v1/Get?inn=7712345678 - получение списка тс по ИНН организации
+https://taksi.0nalog.com:1711/<XXXXXXX>/hs/Car/v1/Get - GET запрос, получить список всех ТС в базе
+Параметры запроса:
+{inn} - ИНН организации
+{vin} - VIN ТС
+{sts} - СТС
+{num} - номер ТС
 Пример ответа:
 [
 {
