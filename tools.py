@@ -46,14 +46,20 @@ def check_phone(phone):
 
 def format_driver_info(row_data):
     """Возвращает строку с информацией о водителе"""
-    control_date = datetime.strptime(row_data['DatePL'], '%Y-%m-%d').strftime('%d.%m.%Y') \
-        if row_data['DatePL'] != '0001-01-01' else 'нет даты'
-    driver_info = """\
-        %s
-        тел.: %s
-        усл.: %s
-        контроль: %s""" % (row_data['FIO'], row_data['PhoneNumber'],
-                           row_data['NameConditionWork'], control_date)
+    driver_info = ''
+    if row_data['FIO']:
+        try:
+            pl_date = datetime\
+                .strptime(row_data['DatePL'], '%Y-%m-%d')\
+                .strftime('%d.%m.%Y')
+        except ValueError:
+            pl_date = 'нет даты'
+        driver_info = """\
+            %s
+            тел.: %s
+            усл.: %s
+            контроль: %s""" % (row_data['FIO'], row_data['PhoneNumber'],
+                               row_data['NameConditionWork'], pl_date)
     return tw.dedent(driver_info)
 
 
@@ -82,46 +88,54 @@ def format_status_detail(row_data):
 
 def format_dc_detail(row_data):
     """Возвращает строку с информацией о диагностической карте"""
+    dc_detail = ''
     if row_data['TOSeriesNumber']:
-        dc_date = datetime.strptime(
-            row_data['TOIssueDate'], '%Y-%m-%dT%H:%M:%S')\
-            .strftime('%d.%m.%Y')
+        try:
+            dc_date = format_date_string(row_data['TOIssueDate'])
+        except ValueError:
+            dc_date = ''
         dc_detail = """ДК %s от %s""" % (row_data['TOSeriesNumber'], dc_date)
-        return tw.dedent(dc_detail)
+    return tw.dedent(dc_detail)
 
 
 def format_osago_detail(row_data):
     """Возвращает строку с информацией о ОСАГО"""
+    osago_detail = ''
     if row_data['OSAGOSeriesNumber']:
-        osago_date = datetime.strptime(
-            row_data['OSAGOIssueDate'], '%Y-%m-%dT%H:%M:%S')\
-            .strftime('%d.%m.%Y')
+        try:
+            osago_date = format_date_string(row_data['OSAGOIssueDate'])
+        except ValueError:
+            osago_date = ''
         osago_detail = """\
         Полис ОСАГО
         %s
         от %s""" % (row_data['OSAGOSeriesNumber'], osago_date)
-        return tw.dedent(osago_detail)
+    return tw.dedent(osago_detail)
 
 
 def format_license_detail(row_data):
     """Возвращает строку с информацией о лицензии"""
+    license_detail = ''
     if row_data['LicenseSeriesNumber']:
-        license_date = datetime.strptime(
-            row_data['LicenseIssueDate'], '%Y-%m-%dT%H:%M:%S')\
-            .strftime('%d.%m.%Y')
+        try:
+            license_date = format_date_string(row_data['LicenseIssueDate'])
+        except ValueError:
+            license_date = ''
         license_detail = """\
         Реестр N %s
         от %s""" % (row_data['LicenseSeriesNumber'], license_date)
-        return tw.dedent(license_detail)
+    return tw.dedent(license_detail)
 
 
 def format_sts_detail(row_data):
     """Возвращает строку с информацией о СТС"""
+    sts_detail = ''
     if row_data['STSSeriesNumber']:
-        sts_date = datetime.strptime(
-            row_data['STSIssueDate'],'%Y-%m-%dT%H:%M:%S')\
-            .strftime('%d.%m.%Y')
+        try:
+            sts_date = format_date_string(row_data['STSIssueDate'])
+        except ValueError:
+            sts_date = ''
         sts_detail = """\
         СТС %s
         от %s""" % (row_data['STSSeriesNumber'], sts_date)
-        return tw.dedent(sts_detail)
+    return tw.dedent(sts_detail)
