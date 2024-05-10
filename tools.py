@@ -49,17 +49,26 @@ def format_driver_info(row_data):
     driver_info = ''
     if row_data['FIO']:
         try:
-            pl_date = datetime\
-                .strptime(row_data['DatePL'], '%Y-%m-%d')\
-                .strftime('%d.%m.%Y')
+            if '0001-01-01' in row_data['DatePL']:
+                pl_date = 'нет даты'
+            else:
+                pl_date = datetime\
+                    .strptime(row_data['DatePL'], '%Y-%m-%d')\
+                    .strftime('%d.%m.%Y')
         except ValueError:
             pl_date = 'нет даты'
+        balance = '0 руб.'
+        if row_data['Balance'] == 0.0:
+            balance = '0 руб.'
+        else:
+            balance = str(row_data['Balance']).replace('.', ',') + ' руб.'
         driver_info = """\
             %s
             тел.: %s
+            баланс: %s
             усл.: %s
             контроль: %s""" % (row_data['FIO'], row_data['PhoneNumber'],
-                               row_data['NameConditionWork'], pl_date)
+                                balance, row_data['NameConditionWork'], pl_date)
     return tw.dedent(driver_info)
 
 
