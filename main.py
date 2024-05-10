@@ -28,7 +28,7 @@ def main():
 
         # Сортируем данные и удаляем дубликаты водителей
         active_drivers = active_drivers[
-            ['FIO', 'PhoneNumber', 'DatePL', 'Car', 'NameConditionWork']
+            ['FIO', 'PhoneNumber', 'Balance', 'DatePL', 'Car', 'NameConditionWork']
         ]\
             .sort_values(by=['Car', 'DatePL'], ascending=[True, True])\
             .drop_duplicates(keep='last')
@@ -89,7 +89,7 @@ def main():
         roster_for_upload = merged_roster[
             [
                 'CarInfo', 'Model', 'Number', 'VIN', 'YearCar', 'Transmission',
-                'GBO', 'MileAge', 'BodyColor', 'Brand', 'LandLord',
+                'GBO', 'MileAge', 'BodyColor', 'Brand', 'LandLord', 'Organization',
                 'STSDetail', 'STSSeriesNumber', 'STSIssueDate', 'STSValidityDate',
                 'TODetail', 'TOSeriesNumber', 'TOIssueDate', 'TOValidityDate',
                 'OSAGOInsurer', 'OSAGODetail','OSAGOSeriesNumber', 'OSAGOIssueDate',
