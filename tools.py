@@ -148,3 +148,57 @@ def format_sts_detail(row_data):
         СТС %s
         от %s""" % (row_data['STSSeriesNumber'], sts_date)
     return tw.dedent(sts_detail)
+
+
+# Группа функций для обработки данных водителей
+def clean_phone(row_data):
+    """Возвращает строку с телефонами водителя или False"""
+    clean_data = re.sub(r'[^0-9]+', ' ', row_data)
+    clean_phone = ', '.join(
+        re.findall(r'([\+7|8|7]+[0-9]{10})',
+                   clean_data)
+    )
+    if not clean_phone:
+        return None, False
+    return clean_phone, True
+
+
+def format_driver_phones(row_data):
+    """Возвращает строку с телефонами водителя"""
+    driver_phones = ''
+    main_phone, main_status = clean_phone(row_data['PhoneNumber'])
+    additional_phone, add_status = clean_phone(row_data['PhoneNumber2'])
+    if main_status:
+        driver_phones ="""осн.: %s""" % main_phone
+    if add_status:
+        driver_phones += """\nдоп.: %s""" % additional_phone
+    return tw.dedent(driver_phones)
+
+
+def format_passport_info(row_data):
+    """Возвращает строку с данными паспорта"""
+    passport_info = ''
+    if row_data['PassportSerialNumber']:
+        passport_info = """\
+        паспорт %s выдан %s %s""" % (row_data['PassportSerialNumber'],
+                                     format_date_string(row_data['PassportIssueDate']),
+                                     row_data['PassportDepartmentName'].upper())
+    return tw.dedent(passport_info)
+
+
+def format_driver_license(row_data):
+    """Возвращает строку с данными вод. удостоверения"""
+    driver_license = ''
+    if row_data['DriversLicenseSerialNumber']:
+        driver_license = """\
+        ВУ %s
+        выдано %s
+        действует до %s
+        """ % (row_data['DriversLicenseSerialNumber'],
+                              format_date_string(row_data['DriversLicenseIssueDate']),
+                              format_date_string(row_data['DriversLicenseExpiryDate']))
+        if '0001-01-01' not in row_data['DriversLicenseExperienceTotalSince']:
+            driver_license += """стаж c %s""" % format_date_string(
+                row_data['DriversLicenseExperienceTotalSince'])
+    return tw.dedent(driver_license)
+
