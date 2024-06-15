@@ -26,19 +26,46 @@ def main():
         active_drivers = element.fetch_active_drivers(
             url=st.DRIVERS_URL, conditions_exclude=st.EXCLUDE_ROSTER)
 
-        # Сортируем данные и удаляем дубликаты водителей
-        active_drivers = active_drivers[
-            ['FIO', 'PhoneNumber', 'Balance', 'DatePL', 'Car', 'NameConditionWork']
-        ]\
-            .sort_values(by=['Car', 'DatePL'], ascending=[True, True])\
+        # Удаляем дубликаты водителей
+        active_drivers = active_drivers\
+            .sort_values(by=['CarDepartment', 'Car', 'DatePL'],
+                         ascending=[True,True, True])\
             .drop_duplicates(keep='last')
+        active_drivers['Phones'] = active_drivers.apply(
+            lambda row: tl.format_driver_phones(row), axis=1)
+        active_drivers['PassportInfo']= active_drivers.apply(
+            lambda row: tl.format_passport_info(row), axis=1)
+        active_drivers['DriverLicenseInfo'] = active_drivers.apply(
+            lambda row: tl.format_driver_license(row), axis=1)
+        formatted_active_drivers = active_drivers[
+            [
+                'ID', 'FIO', 'Sex', 'BirthDate', 'Phones', 'PassportInfo',
+                'PassportRegistrationAddress', 'ActualAddress',
+                'DriverLicenseInfo', 'Comment', 'SNILS', 'INN',
+                'DriverDateCreate', 'EmploymentDate', 'DismissalDate',
+                'Experience', 'NameConditionWork', 'Car', 'CarDepartment',
+                'BeginContract', 'EndContract', 'DatePL',
+                'ConsolidBalance', 'Supervisor', 'KIS_ART_DriverId',
+                'Marketing'
+            ]
+        ].sort_values(by=['FIO'], ascending=[True])
+        formatted_active_drivers['DateUpload'] = datetime.now(pytz.timezone('Europe/Moscow'))\
+            .strftime("%d.%m.%Y %H:%M:%S")
 
-        active_drivers['DriverInfo'] = active_drivers.apply(
+        # Записываем в 1с
+        ss.batch_update_values(st.REPORT_ID, st.RANGE_FOR_UPLOAD_DRIVERS,
+                               formatted_active_drivers.columns.tolist())
+
+        # Отбираем нужные данные
+        drivers = active_drivers[
+            ['FIO', 'PhoneNumber', 'Balance', 'DatePL', 'Car', 'NameConditionWork']
+        ]
+        drivers['DriverInfo'] = drivers.apply(
             lambda row: tl.format_driver_info(row), axis=1)
-        sorted_active_drivers = active_drivers.sort_values(
+        sorted_drivers = drivers.sort_values(
             by=['Car', 'DatePL'], ascending=[True, True])
 
-        driver_info_list = sorted_active_drivers[['Car', 'DriverInfo', 'DatePL']]\
+        driver_info_list = sorted_drivers[['Car', 'DriverInfo', 'DatePL']]\
             .groupby('Car')['DriverInfo']\
             .agg(list)\
             .reset_index(name='DriverInfo')
