@@ -54,7 +54,7 @@ def main():
 
         # Записываем в 1с
         ss.batch_update_values(st.REPORT_ID, st.RANGE_FOR_UPLOAD_DRIVERS,
-                               formatted_active_drivers.columns.tolist())
+                               formatted_active_drivers.values.tolist())
 
         # Отбираем нужные данные
         drivers = active_drivers[
