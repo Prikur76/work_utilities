@@ -46,7 +46,7 @@ def main():
                 'Experience', 'NameConditionWork', 'Car', 'CarDepartment',
                 'BeginContract', 'EndContract', 'DatePL',
                 'ConsolidBalance', 'Supervisor', 'KIS_ART_DriverId',
-                'Marketing'
+                'Marketing', 'DefaultID'
             ]
         ].sort_values(by=['FIO'], ascending=[True])
         formatted_active_drivers['DateUpload'] = datetime.now(pytz.timezone('Europe/Moscow'))\
