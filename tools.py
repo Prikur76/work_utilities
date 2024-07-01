@@ -202,3 +202,10 @@ def format_driver_license(row_data):
                 row_data['DriversLicenseExperienceTotalSince'])
     return tw.dedent(driver_license)
 
+
+def format_fullname(row_data):
+    """Возвращает строку с ФИО водителя"""
+    fullname = '%s %s' % (row_data['last_name'].strip(), row_data['first_name'].strip())
+    if str(row_data['middle_name']).strip():
+        fullname +=  f" {row_data['middle_name']}"
+    return fullname
