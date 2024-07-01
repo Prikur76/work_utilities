@@ -2,8 +2,9 @@
 import logging
 import time
 from datetime import datetime
-import pytz
+
 import numpy as np
+import pytz
 import requests
 from googleapiclient.errors import HttpError
 
@@ -26,11 +27,10 @@ def main():
         active_drivers = element.fetch_active_drivers(
             url=st.DRIVERS_URL, conditions_exclude=st.EXCLUDE_ROSTER)
 
-        # Удаляем дубликаты водителей
+        # Форматирование списка работающих водителей
         active_drivers = active_drivers\
             .sort_values(by=['CarDepartment', 'Car', 'DatePL'],
-                         ascending=[True,True, True])\
-            .drop_duplicates(keep='last')
+                         ascending=[True,True, True])
         active_drivers['Phones'] = active_drivers.apply(
             lambda row: tl.format_driver_phones(row), axis=1)
         active_drivers['PassportInfo']= active_drivers.apply(
@@ -52,7 +52,7 @@ def main():
         formatted_active_drivers['DateUpload'] = datetime.now(pytz.timezone('Europe/Moscow'))\
             .strftime("%d.%m.%Y %H:%M:%S")
 
-        # Записываем в 1с
+        # Записываем в гугл
         ss.batch_update_values(st.REPORT_ID, st.RANGE_FOR_UPLOAD_DRIVERS,
                                formatted_active_drivers.values.tolist())
 
@@ -140,8 +140,7 @@ def main():
         logger.error(msg=f'Ошибка обработки пакета: {chunked_err}',
                      stack_info=False)
     except requests.exceptions.Timeout as timeout_err:
-        logger.error(msg=f'Timeout: {timeout_err}',
-                     stack_info=False)
+        logger.error(msg=f'Timeout: {timeout_err}', stack_info=False)
         time.sleep(300)
     except requests.exceptions.ConnectionError as conn_err:
         logger.error(msg=f'Ошибка HTTP соединения: {conn_err}',
