@@ -78,8 +78,10 @@ def format_car_info(row_data):
         %s (%s)
         vin: %s
         гнз: %s
-        %s""" % (row_data['Model'], row_data['YearCar'], row_data['VIN'],
-                          row_data['Number'], row_data['Transmission'])
+        %s %s""" % (row_data['Model'], row_data['YearCar'], row_data['VIN'],
+                    row_data['Number'],
+                    round(row_data['EngineCapacity']/1000, 1) if row_data['EngineCapacity'] else '',
+                    row_data['Transmission'])
     if row_data['GBO']:
         car_info += """, ГБО"""
     return tw.dedent(car_info)
@@ -150,6 +152,27 @@ def format_sts_detail(row_data):
     return tw.dedent(sts_detail)
 
 
+def fetch_car_location(row_data):
+    """Возвращает строку с местоположением машины"""
+    car_location = ''
+    splitted_row = [row.upper().strip() for row in row_data['CommentCar'].split('||') if row]
+    location_subrows = [
+        row.replace('ЛОКАЦИЯ', '').replace(':', '').strip() for row
+        in splitted_row if 'ЛОКАЦИЯ' in row
+    ]
+    if location_subrows:
+        car_location = location_subrows[0]
+    return tw.dedent(car_location)
+
+def format_comment_car(row_data):
+    """Возвращает строку с комментарием"""
+    comments = ''
+    if row_data['CommentCar']:
+        splitted_comments = [row.strip() for row in row_data['CommentCar'].split('||')]
+        comments = '\n'.join(splitted_comments)
+    return tw.dedent(comments)
+
+
 # Группа функций для обработки данных водителей
 def clean_phone(row_data):
     """Возвращает строку с телефонами водителя или False"""
@@ -209,3 +232,4 @@ def format_fullname(row_data):
     if str(row_data['middle_name']).strip():
         fullname +=  f" {row_data['middle_name']}"
     return fullname
+
