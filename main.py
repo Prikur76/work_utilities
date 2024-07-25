@@ -81,7 +81,7 @@ def main():
         active_cars['Transmission'] = np.select(
             [active_cars['KPPType'] == 'АКПП',
              active_cars['KPPType'] == 'МКПП', active_cars['KPPType'] == ''],
-            ['автомат', 'механика', ''], default='' )
+            ['АТ', 'МТ', ''], default='' )
         active_cars['GBO'] = np.select(
             [active_cars['Gas'] == True, active_cars['Gas'] == False],
             ['ГБО', ''], default='')
@@ -102,6 +102,10 @@ def main():
             lambda row: tl.format_car_info(row), axis=1)
         active_cars['StatusDetail'] = active_cars.apply(
             lambda row: tl.format_status_detail(row), axis=1)
+        active_cars['FormattedCommentCar'] = active_cars.apply(
+            lambda row: tl.format_comment_car(row), axis=1)
+        active_cars['CarLocation'] = active_cars.apply(
+            lambda row: tl.fetch_car_location(row), axis=1)
         active_cars['DateUpload'] = datetime.now(pytz.timezone('Europe/Moscow'))\
             .strftime("%d.%m.%Y %H:%M:%S")
 
@@ -110,7 +114,7 @@ def main():
             driver_info_list, how='left', left_on='Number', right_on='Car')\
             .drop_duplicates(subset=['VIN'], keep='first')\
             .fillna('')\
-            .sort_values(by=['Region', 'Department', 'Model', 'Number'],
+            .sort_values(by=['Region', 'Department', 'Model', 'VIN'],
                          ascending=[True, True, True, True])
 
         roster_for_upload = merged_roster[
@@ -121,8 +125,8 @@ def main():
                 'TODetail', 'TOSeriesNumber', 'TOIssueDate', 'TOValidityDate',
                 'OSAGOInsurer', 'OSAGODetail','OSAGOSeriesNumber', 'OSAGOIssueDate',
                 'OSAGOValidityDate','LicenseLicensee', 'LicenseDetail', 'LicenseSeriesNumber',
-                'LicenseIssueDate', 'LicenseValidityDate',
-                'StatusDetail', 'Status', 'SubStatus', 'Reason', 'Comment',
+                'LicenseIssueDate', 'LicenseValidityDate', 'StatusDetail', 'Status',
+                'SubStatus', 'Reason', 'Comment', 'FormattedCommentCar', 'CarLocation',
                 'Department', 'Region', 'DriverInfo', 'DateUpload'
             ]
         ]
