@@ -1,5 +1,6 @@
 import pandas as pd
 import requests
+import json
 
 import tools
 
@@ -15,13 +16,20 @@ class Element():
         """Возвращает список водителей 1с:Элемент в формате .json"""
         auth = (self.user, self.password)
         # headers = {'Accept': 'application/json'}
-        with requests.get(url=url, auth=auth, stream=True) as response:
+        with requests.post(url=url, auth=auth, stream=True) as response:
             response.raise_for_status()
             return response.json()
 
     def fetch_active_drivers(self, url, conditions_exclude=['', ]):
         """Возвращает отфильтрованный список работающих водителей"""
-        drivers_roster = self.get_drivers(url)
+        auth = (self.user, self.password)
+        # headers = {'Accept': 'application/json'}
+        payload = {
+            'Status': ['Работает', ],
+        }
+        with requests.post(url=url, auth=auth, json=payload, stream=True) as response:
+            response.raise_for_status()
+            drivers_roster = response.json()
         drivers = pd.DataFrame(drivers_roster)
         filters = (drivers.Status == 'Работает') & (~drivers.ExternalCar) & \
                   (~drivers.NameConditionWork.isin(conditions_exclude)) & \
