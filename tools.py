@@ -68,7 +68,7 @@ def format_driver_info(row_data):
             баланс: %s
             усл.: %s
             контроль: %s""" % (row_data['FIO'], row_data['PhoneNumber'],
-                                balance, row_data['NameConditionWork'], pl_date)
+                               balance, row_data['NameConditionWork'], pl_date)
     return tw.dedent(driver_info)
 
 
@@ -230,6 +230,5 @@ def format_fullname(row_data):
     """Возвращает строку с ФИО водителя"""
     fullname = '%s %s' % (row_data['last_name'].strip(), row_data['first_name'].strip())
     if str(row_data['middle_name']).strip():
-        fullname +=  f" {row_data['middle_name']}"
+        fullname += f" {row_data['middle_name']}"
     return fullname
-
