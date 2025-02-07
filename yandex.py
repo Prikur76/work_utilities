@@ -1,5 +1,6 @@
 import pandas as pd
 import requests
+import time
 
 
 class Taximeter:
@@ -12,8 +13,11 @@ class Taximeter:
         return "Park_ID:    %s\nClient_ID:  %s\nAPI-key:    %s" \
             % (self.park_id, self.client_id, self.api_key)
 
-    def fetch_drivers_profiles(self):
-        """Возвращает профили водителей. Метод POST"""
+    def fetch_drivers_profiles(self, updated_from: str = None, updated_to: str = None):
+        """Возвращает профили водителей (курьеров).
+        Формат даты (updated_from, updated_to): '2024-06-16T00:00:00Z'.
+        Метод POST
+        """
         url = 'https://fleet-api.taxi.yandex.net/v1/parks/driver-profiles/list'
         headers = {
             'X-Client-ID': self.client_id,
@@ -22,54 +26,68 @@ class Taximeter:
         }
         payload = {
             'fields': {
-                'account': ['balance', 'last_transaction_date'],
-                'car': ['vin', 'number'],
-                'current_status': ['status', 'status_updated_at'],
+                'account': [],
+                'car': [],
+                'park': [],
                 'driver_profile': [
                     'id', 'first_name', 'middle_name', 'last_name',
                     'phones', 'driver_license', 'created_date',
                     'work_rule_id', 'work_status', 'check_message',
-                    'comment'
+                    'comment', 'is_selfemployed', 'has_contract_issue',
+                    'park_id'
                 ],
-                'park': ['name'],
+                'current_status': ['status', 'status_updated_at']
             },
             'limit': 1000,
             'offset': 0,
             'query': {
                 'park': {
-                    'id': self.park_id
+                    'id': self.park_id,
+                    'updated_at': {
+                        'from': updated_from,
+                        'to': updated_to
+                    }
                 },
                 'text': ''
             },
             'sort_order': [
                 {
-                    'direction': 'desc',
+                    'direction': 'asc',
                     'field': 'driver_profile.created_date'
                 }
             ]
         }
-        with requests.post(url=url, json=payload,
-                           headers=headers, stream=True) as response:
-            response.raise_for_status()
+        if updated_from is None and updated_to is None:
+            del payload['query']['park']['updated_at']
 
-            roster = response.json()
-            drivers_profiles = roster['driver_profiles']
+        payload['offset'] = 0
+        total = 1
+        drivers_profiles = []
+        while payload['offset'] <= total:
+            with requests.post(url=url, headers=headers,
+                               json=payload, stream=True) as response:
+                response.raise_for_status()
+                roster = response.json()
+            drivers_profiles.extend(roster['driver_profiles'])
             total = roster['total']
-            if total > 1000:
-                offsets = [i for i in range(1, total, 1000)]
-                for offset in offsets:
-                    payload['offset'] = offset
-                    payload['limit'] = 1000
-                    with requests.post(
-                            url=url,
-                            json=payload,
-                            headers=headers,
-                            stream=True) as offset_response:
-                        offset_response.raise_for_status()
-                        driver_profiles = \
-                            offset_response.json()['driver_profiles']
-                        drivers_profiles.extend(driver_profiles)
-            return drivers_profiles
+            payload['offset'] += 1000
+            time.sleep(1)
+        return drivers_profiles
+
+    def fetch_driver_profile_by_id(self, driver_id: str):
+        """Возвращает профиль водителя по id. Метод GET"""
+        url = f'https://fleet-api.taxi.yandex.net/v2/parks/contractors/driver-profile'
+        headers = {
+            'X-Park-ID': self.park_id,
+            'X-Client-ID': self.client_id,
+            'X-API-Key': self.api_key
+        }
+        payload = {
+            'contractor_profile_id': driver_id
+        }
+        response = requests.get(url=url, headers=headers, params=payload)
+        response.raise_for_status()
+        return response.json()
 
     def fetch_active_balances(self):
         """Возвращает список активных водителей."""
