@@ -41,7 +41,7 @@ def main():
             [
                 'ID', 'FIO', 'Sex', 'BirthDate', 'Phones', 'PassportInfo',
                 'PassportRegistrationAddress', 'ActualAddress',
-                'DriverLicenseInfo', 'Comment', 'SNILS', 'INN',
+                'DriverLicenseInfo', 'Comment', 'SNILS', 'INN', 'OGRN',
                 'DriverDateCreate', 'EmploymentDate', 'DismissalDate',
                 'Experience', 'NameConditionWork', 'Car', 'CarDepartment',
                 'BeginContract', 'EndContract', 'DatePL',
