@@ -12,6 +12,7 @@ import element as el
 import settings as st
 import spreadsheets as ss
 import tools as tl
+from handle_supervisers import update_supervisers
 
 logger = logging.getLogger(__name__)
 
@@ -133,6 +134,8 @@ def main():
 
         ss.batch_update_values(st.REPORT_ID, st.RANGE_FOR_UPLOAD,
                                roster_for_upload.values.tolist())
+        
+        update_supervisers()
 
     except HttpError as ggl_http_err:
         logger.error(msg=f'Ошибка подключения гугла: {ggl_http_err}',

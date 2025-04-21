@@ -2,9 +2,11 @@ google-auth==2.33.0
 google-api-python-client==2.140.0
 google-auth-httplib2==0.2.0
 google-auth-oauthlib==1.2.1
-requests==2.31.0
-pandas==2.0.3
-schedule==1.2.0
-environs==9.5.0
-openpyxl==3.1.2
+requests
+schedule
+openpyxl
 numpy==1.26.4
+gspread
+pandas
+environs
+oauth2client
