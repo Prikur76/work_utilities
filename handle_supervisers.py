@@ -4,12 +4,9 @@ import pandas as pd
 import gspread
 import logging
 
-from environs import Env
 from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
-
 from app_logger import get_logger
-from tools import format_date_string
 from settings import (
     SPREADSHEET_NAME, WORKSHEET_NAME, 
     GOOGLE_SHEETS_CREDENTIALS_FILE, 
