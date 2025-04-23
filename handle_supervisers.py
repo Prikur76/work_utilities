@@ -77,6 +77,7 @@ def process_data(data):
     df_filtered["Дата создания"] = df_filtered["Дата создания"].apply(
         lambda x: datetime.fromisoformat(x).strftime("%Y-%m-%d") if pd.notnull(x) else None
     )
+    df_filtered["Обновлено"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     # Выбор нужных столбцов с новыми названиями
     required_columns = [
@@ -87,7 +88,8 @@ def process_data(data):
         "Год-мес",
         "Статус",
         "Куратор",
-        "Комментарий"
+        "Комментарий",
+        "Обновлено"
     ]
     
     # Проверяем наличие всех колонок
