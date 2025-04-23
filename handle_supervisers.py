@@ -1,9 +1,9 @@
-
 import httpx
 import pandas as pd
 import gspread
 import logging
 
+from pathlib import Path
 from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 from app_logger import get_logger
@@ -25,7 +25,7 @@ def connect_to_google_sheets():
             "https://www.googleapis.com/auth/drive"
         ]
         credentials = ServiceAccountCredentials.from_json_keyfile_name(
-            GOOGLE_SHEETS_CREDENTIALS_FILE, 
+            Path(__file__).parent / GOOGLE_SHEETS_CREDENTIALS_FILE, 
             scope
         )
         client = gspread.authorize(credentials)
